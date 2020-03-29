@@ -1,11 +1,11 @@
-number;title;cell 1;cell 2;cell 3;cell 4;cell 5;cell 6;cell 7;cell 8;cell 9;cell 10;cell 11
-1;;Linear independence;;;;;;;;;;
-2;;Spans;Basis;;;;;;;;;
-3;;Subspaces;Basis;Dimension and rank;;;;;;;;
-4;;Coordinate vectors;Diagonalization;;;;;;;;;
-5;;Diagonalization;Gram-Schmidt process;;;;;;;;;
-6;;;;;;;;;;;;
-7;;;;;;;;;;;;
-8;;;;;;;;;;;;
-9;;;;;;;;;;;;
-10;;;;;;;;;;;;
+number;title;cell_1;cell_2;cell_3;cell_4;cell_5;cell_6;cell_7;cell_8;cell_9;cell_10;cell_11;
+1;;Linear independence;;;;;;;;;;;
+2;;Spans;Basis;;;;;;;;;;
+3;;Subspaces;Basis;Dimension and rank;;;;;;;;;
+4;;Coordinate vectors;Diagonalization;;;;;;;;;;
+5;;Diagonalization;Gram-Schmidt process;;;;;;;;;;
+6;;;;;;;;;;;;;
+7;;;;;;;;;;;;;
+8;;;;;;;;;;;;;
+9;;;;;;;;;;;;;
+10;;;;;;;;;;;;;

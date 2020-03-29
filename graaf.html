@@ -1,7 +1,9 @@
 <html>
 <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/joint.css">
     <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="js/lodash.js"></script>
     <script src="js/backbone.js"></script>
     <script src="js/dagre.js"></script>
@@ -12,8 +14,23 @@
     <script src="csv-importer.js"></script>
 </head>
 <body>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="#">Domains</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" onclick="state.graaf.showAll()">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Zoomed in</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="state.graaf.showModule(state.module)">This week</a>
+        </li>
+    </ul>
     <div id="graaf"></div>
+    <div id="sub_view"></div>
 </body>
-
+<script src="Graaf.js"></script>
 <script src="main.js"></script>
 </html>

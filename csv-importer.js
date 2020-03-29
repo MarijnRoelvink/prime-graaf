@@ -1,18 +1,28 @@
 function getGraph(callback) {
     getDomains((domains) => {
+
         getCells((cells) => {
             cells.forEach((c) => {
                 let domain = c.domain;
                 c.domain = domains.find((d) => d.domain === domain);
             });
-            getEdges((edges) => {
-                edges.forEach((e) => {
-                    let from = e.from;
-                    let to = e.to;
-                    e.from = cells.find((c) => c.name === from);
-                    e.to = cells.find((c) => c.name === to);
+
+            getModules((modules) => {
+                modules.forEach((m) => {
+                    m.cells = m.cells.map((mc) => {
+                        return cells.find((c) => c.name === mc);
+                    });
                 });
-                callback({cells: cells, domains: domains, edges: edges});
+
+                getEdges((edges) => {
+                    edges.forEach((e) => {
+                        let from = e.from;
+                        let to = e.to;
+                        e.from = cells.find((c) => c.name === from);
+                        e.to = cells.find((c) => c.name === to);
+                    });
+                    callback({cells: cells, domains: domains, edges: edges, modules: modules});
+                });
             });
         });
     });
@@ -28,6 +38,10 @@ function getCells(callback) {
 
 function getEdges(callback) {
     getData("resources/edges.csv", Edge, callback);
+}
+
+function getModules(callback) {
+    getData("resources/modules.csv", Module, callback);
 }
 
 function getData(url, datatype, callback) {

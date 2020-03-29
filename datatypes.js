@@ -20,3 +20,11 @@ class Domain {
         this.svg = svg;
     }
 }
+
+class Module {
+    constructor(module) {
+        this.number = parseInt(module.number);
+        this.title = module.title;
+        this.cells = Object.values(module).slice(2).filter((v) => v !== "");
+    }
+}
