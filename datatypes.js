@@ -26,5 +26,8 @@ class Module {
         this.number = parseInt(module.number);
         this.title = module.title;
         this.cells = Object.values(module).slice(2).filter((v) => v !== "");
+        this.elNow = {};
+        this.elPrev = {};
+        this.elNext = {};
     }
 }

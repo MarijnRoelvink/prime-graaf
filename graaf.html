@@ -18,14 +18,14 @@
         <li class="nav-item">
             <a class="nav-link" href="#">Domains</a>
         </li>
-        <li class="nav-item active">
-            <a class="nav-link" onclick="state.graaf.showAll()">Overview</a>
+        <li class="nav-item">
+            <a class="nav-link" onclick="switchView('all', this)">Overview</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Zoomed in</a>
+            <a class="nav-link" onclick="switchView('module', this)">Zoomed in</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" onclick="state.graaf.showModule(state.module)">This week</a>
+            <a class="nav-link active" onclick="switchView('week', this)">This week</a>
         </li>
     </ul>
     <div id="graaf"></div>

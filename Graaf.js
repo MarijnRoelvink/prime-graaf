@@ -4,11 +4,21 @@ class Graaf {
 		this.edges = edges;
 		this.domains = domains;
 		this.modules = modules;
-		this.g = this.buildGraph({cells, edges, domains});
+		this.currView = "week";
+		this.g = this.buildGraph({cells, edges, domains, modules});
+	}
+
+	switchView(view, module) {
+		this.removeModuleBoxes(module);
+		switch(view) {
+			case "week": this.showWeek(module); break;
+			case "module": this.showModule(module); break;
+			case "all": this.showAll(); break;
+		}
 	}
 
 
-	buildGraph({cells, edges, domains}) {
+	buildGraph({cells, edges, domains, modules}) {
 		let graph = new joint.dia.Graph;
 
 		let paper = new joint.dia.Paper({
@@ -28,7 +38,8 @@ class Graaf {
 				attrs: {
 					image: {
 						width: c.name.length * 8,
-						height: 40
+						height: 40,
+						marginTop: '20px'
 					},
 					label: {
 						text: c.name,
@@ -38,6 +49,25 @@ class Graaf {
 			el.resize(c.name.length * 8, 40);
 			el.addTo(graph);
 			c.element = el;
+		});
+
+		modules.forEach((m) => {
+			m.elNow = new joint.shapes.basic.Rect({
+				size: { width: 400, height: 200 },
+				attrs: { rect: { fill: 'rgba(255, 255, 255, 0)'},
+					text: { text: 'This week',
+						refY: '-60%'}}
+			});
+
+			m.elPrev = new joint.shapes.basic.Rect({
+				size: { width: 200, height: 200 },
+				attrs: { rect: { fill: 'rgba(255, 255, 255, 0)' },
+					text: { text: 'Previous topics', refY: '-60%'}}
+			});
+			m.elNext = new joint.shapes.basic.Rect({
+				size: { width: 200, height: 200 },
+				attrs: { rect: { fill: 'rgba(255, 255, 255, 0)' }, text: { text: 'Next topics', refY: '-60%'}}
+			});
 		});
 
 
@@ -76,8 +106,8 @@ class Graaf {
 
 	}
 
-	showModule(name) {
-		let module = this.modules.find((m) => m.number === state.module);
+	showModule(number) {
+		let module = this.modules.find((m) => m.number === number);
 
 		this.cells.forEach((c) => {
 			if (!module.cells.includes(c)) {
@@ -106,6 +136,47 @@ class Graaf {
 				e.link.addTo(this.g);
 			}
 		});
+
+		let graphBBox = joint.layout.DirectedGraph.layout(this.g, {
+			nodeSep: 20,
+			edgeSep: 20,
+			rankDir: "TB"
+		});
+	}
+
+	removeModuleBoxes(number) {
+		let module = this.modules.find((m) => m.number === number);
+
+		module.cells.forEach((c) => {
+			module.elNow.unembed(c.element);
+		});
+
+		module.elNow.remove();
+		module.elPrev.remove();
+		module.elNext.remove();
+	}
+	showWeek(number) {
+		let module = this.modules.find((m) => m.number === number);
+		this.showModule(number);
+
+		module.cells.forEach((c) => {
+			module.elNow.embed(c.element);
+		});
+
+		this.edges.forEach((e) => {
+			let isFrom = module.cells.includes(e.from);
+			let isTo = module.cells.includes(e.to);
+			if (isFrom && !module.cells.includes(e.to)) {
+				module.elNext.embed(e.to.element);
+			} else if (isTo && !module.cells.includes(e.from)) {
+				module.elPrev.embed(e.from.element);
+			}
+		});
+
+		module.elNow.addTo(this.g);
+		module.elPrev.addTo(this.g);
+		module.elNext.addTo(this.g);
+
 
 		let graphBBox = joint.layout.DirectedGraph.layout(this.g, {
 			nodeSep: 20,
