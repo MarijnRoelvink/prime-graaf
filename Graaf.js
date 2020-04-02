@@ -114,11 +114,12 @@ class Graaf {
 				c.element.remove();
 			} else {
 				c.element.attr('./filter', {
-					name: 'dropShadow',
+					name: 'highlight',
 					args: {
-						dx: 2,
-						dy: 2,
-						blur: 3
+						color: 'green',
+						width: 3,
+						opacity: 0.8,
+						blur: 5
 					}
 				});
 			}
