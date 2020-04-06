@@ -7,8 +7,8 @@ let state = {
 function init() {
 	state.module = parseInt(getUrlQuery("module", 1));
 	getGraph((graph) => {
-		state.graaf = new Graaf(graph) ;
-		state.graaf.showWeek(state.module);
+		state.graaf = new Graaf(graph, state.module) ;
+		state.graaf.showAll();
 	});
 }
 function switchView(view, el) {
@@ -16,7 +16,7 @@ function switchView(view, el) {
 		$(this).removeClass("active");
 	});
 	$(el).addClass("active");
-	state.graaf.switchView(view, state.module);
+	state.graaf.switchView(view);
 }
 function getUrlQuery(q, defaultV = "") {
 	let query = {};

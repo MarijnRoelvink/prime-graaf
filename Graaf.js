@@ -1,18 +1,20 @@
 class Graaf {
-	constructor({cells, edges, domains, modules}) {
+	constructor({cells, edges, domains, modules}, module) {
 		this.cells = cells;
 		this.edges = edges;
 		this.domains = domains;
 		this.modules = modules;
+		this.module = modules.find((m) => m.number === module);
 		this.currView = "week";
+		this.cellHeight = 40;
 		this.g = this.buildGraph({cells, edges, domains, modules});
 	}
 
-	switchView(view, module) {
-		this.removeModuleBoxes(module);
+	switchView(view) {
+		this.removeModuleBoxes();
 		switch(view) {
-			case "week": this.showWeek(module); break;
-			case "module": this.showModule(module); break;
+			case "week": this.showWeek(); break;
+			case "module": this.showModule(); break;
 			case "all": this.showAll(); break;
 		}
 	}
@@ -34,11 +36,13 @@ class Graaf {
 		});
 
 		cells.forEach((c) => {
+			c.width = c.name.length * 8;
+
 			let el = new joint.shapes.standard[c.domain.domain]({
 				attrs: {
 					image: {
 						width: c.name.length * 8,
-						height: 40,
+						height: this.cellHeight,
 						marginTop: '20px'
 					},
 					label: {
@@ -46,38 +50,42 @@ class Graaf {
 					}
 				}
 			});
-			el.resize(c.name.length * 8, 40);
+			el.resize(c.name.length * 8, this.cellHeight);
 			el.addTo(graph);
 			c.element = el;
+
+			if(this.module.cells.includes(c)) {
+				c.element.attr('./filter', {
+					name: 'highlight',
+					args: {
+						color: '#70AB37',
+						width: 6,
+						opacity: 1,
+						blur: 5
+					}
+				});
+			}
 		});
 
-		modules.forEach((m) => {
-			m.elNow = new joint.shapes.basic.Rect({
-				size: { width: 400, height: 200 },
-				attrs: { rect: { fill: 'rgba(255, 255, 255, 0)'},
-					text: { text: 'This week',
-						refY: '-60%'}}
-			});
-
-			m.elPrev = new joint.shapes.basic.Rect({
-				size: { width: 200, height: 200 },
-				attrs: { rect: { fill: 'rgba(255, 255, 255, 0)' },
-					text: { text: 'Previous topics', refY: '-60%'}}
-			});
-			m.elNext = new joint.shapes.basic.Rect({
-				size: { width: 200, height: 200 },
-				attrs: { rect: { fill: 'rgba(255, 255, 255, 0)' }, text: { text: 'Next topics', refY: '-60%'}}
-			});
-		});
-
-
-		for (let i = 0; i < edges.length; i++) {
+		edges.forEach((e) => {
 			let link = new joint.shapes.standard.Link();
-			link.source(edges[i].from.element);
-			link.target(edges[i].to.element);
+			link.source(e.from.element);
+			link.target(e.to.element);
+			//link.attr('line/stroke', e.from.domain.color);
 			link.addTo(graph);
-			edges[i].link = link;
-		}
+			e.link = link;
+
+			//Add next and previous topics to module structure
+			let isFrom = this.module.cells.includes(e.from);
+			let isTo = this.module.cells.includes(e.to);
+			if (isFrom && !this.module.cells.includes(e.to)) {
+				this.module.nextCells.push(e.to);
+			} else if (isTo && !this.module.cells.includes(e.from)) {
+				this.module.prevCells.push(e.from);
+			}
+		});
+
+		this.makeModuleBoxes();
 
 		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
 			nodeSep: 10,
@@ -99,42 +107,18 @@ class Graaf {
 		});
 
 		let graphBBox = joint.layout.DirectedGraph.layout(this.g, {
-			nodeSep: 10,
-			edgeSep: 10,
-			rankDir: "TB"
+			nodeSep: 5,
+			edgeSep: 5,
+			rankDir: "TB",
+			ranker: "longest-path"
 		});
 
 	}
 
-	showModule(number) {
-		let module = this.modules.find((m) => m.number === number);
-
+	showModule() {
 		this.cells.forEach((c) => {
-			if (!module.cells.includes(c)) {
+			if (!(this.module.cells.includes(c) || this.module.prevCells.includes(c) || this.module.nextCells.includes(c))) {
 				c.element.remove();
-			} else {
-				c.element.attr('./filter', {
-					name: 'highlight',
-					args: {
-						color: 'green',
-						width: 3,
-						opacity: 0.8,
-						blur: 5
-					}
-				});
-			}
-		});
-
-		this.edges.forEach((e) => {
-			let isFrom = module.cells.includes(e.from);
-			let isTo = module.cells.includes(e.to);
-			if (isFrom) {
-				e.to.element.addTo(this.g);
-			} else if (isTo) {
-				e.from.element.addTo(this.g);
-			}
-			if ((isFrom || isTo) && !(isFrom && isTo)) {
-				e.link.addTo(this.g);
 			}
 		});
 
@@ -145,49 +129,83 @@ class Graaf {
 		});
 	}
 
-	removeModuleBoxes(number) {
-		let module = this.modules.find((m) => m.number === number);
-
-		module.cells.forEach((c) => {
-			module.elNow.unembed(c.element);
+	removeModuleBoxes() {
+		this.module.cells.forEach((c) => {
+			this.module.elNow.unembed(c.element);
 		});
 
-		module.elNow.remove();
-		module.elPrev.remove();
-		module.elNext.remove();
+		this.module.nextCells.forEach((c) => {
+			this.module.elNext.unembed(c.element);
+		});
+
+		this.module.prevCells.forEach((c) => {
+			this.module.elPrev.unembed(c.element);
+		});
+
+		this.module.elNow.remove();
+		this.module.elPrev.remove();
+		this.module.elNext.remove();
 	}
-	showWeek(number) {
-		let module = this.modules.find((m) => m.number === number);
-		this.showModule(number);
+	showWeek() {
+		this.showModule();
 
-		module.cells.forEach((c) => {
-			module.elNow.embed(c.element);
+		this.module.cells.forEach((c) => {
+			this.module.elNow.embed(c.element);
 		});
 
-		this.edges.forEach((e) => {
-			let isFrom = module.cells.includes(e.from);
-			let isTo = module.cells.includes(e.to);
-			if (isFrom && !module.cells.includes(e.to)) {
-				module.elNext.embed(e.to.element);
-			} else if (isTo && !module.cells.includes(e.from)) {
-				module.elPrev.embed(e.from.element);
+		this.module.prevCells.forEach((c) => {
+			this.module.elPrev.embed(c.element);
+		});
+
+		this.module.nextCells.forEach((c) => {
+			this.module.elNext.embed(c.element);
+		});
+
+		this.module.elNow.addTo(this.g);
+		this.module.elPrev.addTo(this.g);
+		this.module.elNext.addTo(this.g);
+
+		let positionBelow = (cells, x, y, yMargin = 40) => {
+			for (let i = 0; i < cells.length; i++) {
+				cells[i].element.position(x + (this.module.width - cells[i].width)/2, yMargin + y + (this.cellHeight + yMargin)*i);
 			}
-		});
-
-		module.elNow.addTo(this.g);
-		module.elPrev.addTo(this.g);
-		module.elNext.addTo(this.g);
-
-
-		let graphBBox = joint.layout.DirectedGraph.layout(this.g, {
-			nodeSep: 20,
-			edgeSep: 20,
-			rankDir: "TB"
-		});
+		};
+		positionBelow(this.module.prevCells, this.module.margin, this.module.margin);
+		positionBelow(this.module.cells, this.module.margin + this.module.width, this.module.margin);
+		positionBelow(this.module.nextCells, this.module.margin + this.module.width*2, this.module.margin);
 	}
 
+	makeModuleBoxes() {
+		let margin = 50;
+		let width = 300;
+		this.module.width = width;
+		this.module.margin = margin;
+		let height = Math.max(this.module.prevCells.length, Math.max(this.module.cells.length, this.module.nextCells.length)) * (this.cellHeight + margin);
+		let refY = -((20/height + 0.5)*100) + '%';
+
+		this.module.elNow = new joint.shapes.basic.Rect({
+			size: { width: width, height: height },
+			position: {x: margin + width, y: margin},
+			attrs: { rect: { fill: 'rgba(255, 255, 255, 0)'},
+				text: { text: 'This week',
+					refY: refY}}
+		});
+
+		this.module.elPrev = new joint.shapes.basic.Rect({
+			size: { width: width, height: height },
+			position: {x: margin, y: margin},
+			attrs: { rect: { fill: 'rgba(255, 255, 255, 0)' },
+				text: { text: 'Previous topics', refY: refY}}
+		});
+		this.module.elNext = new joint.shapes.basic.Rect({
+			size: { width: width, height: height },
+			position: {x: margin + 2*width, y: margin},
+			attrs: { rect: { fill: 'rgba(255, 255, 255, 0)' }, text: { text: 'Next topics', refY: refY}}
+		});
+	}
 
 	makeSVGElement(name, svg) {
+		console.log(svg);
 		joint.dia.Element.define('standard.' + name, {
 			attrs: {
 				image: {

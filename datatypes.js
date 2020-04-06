@@ -3,6 +3,7 @@ class Cell {
         this.name = name;
         this.domain = domain;
         this.element = {};
+        this.width = 0;
     }
 }
 
@@ -15,9 +16,10 @@ class Edge {
 }
 
 class Domain {
-    constructor({domain, svg}) {
+    constructor({domain, svg, color}) {
         this.domain = domain;
         this.svg = svg;
+        this.color = color;
     }
 }
 
@@ -26,8 +28,12 @@ class Module {
         this.number = parseInt(module.number);
         this.title = module.title;
         this.cells = Object.values(module).slice(2).filter((v) => v !== "");
+        this.prevCells = [];
+        this.nextCells = [];
         this.elNow = {};
         this.elPrev = {};
         this.elNext = {};
+        this.width = 0;
+        this.margin = 0;
     }
 }
