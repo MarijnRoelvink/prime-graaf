@@ -71,7 +71,7 @@ class Graaf {
 			let link = new joint.shapes.standard.Link();
 			link.source(e.from.element);
 			link.target(e.to.element);
-			//link.attr('line/stroke', e.from.domain.color);
+			link.attr('line/stroke', e.from.domain.color);
 			link.addTo(graph);
 			e.link = link;
 

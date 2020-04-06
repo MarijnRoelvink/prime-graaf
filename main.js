@@ -8,7 +8,7 @@ function init() {
 	state.module = parseInt(getUrlQuery("module", 1));
 	getGraph((graph) => {
 		state.graaf = new Graaf(graph, state.module) ;
-		state.graaf.showAll();
+		state.graaf.showWeek();
 	});
 }
 function switchView(view, el) {
