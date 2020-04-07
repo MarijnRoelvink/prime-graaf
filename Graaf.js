@@ -1,19 +1,19 @@
 class Graaf {
-	constructor({cells, edges, domains, modules}, module) {
+	constructor({cells, edges, domains, lectures}, lecture) {
 		this.cells = cells;
 		this.edges = edges;
 		this.domains = domains;
-		this.modules = modules;
-		this.module = modules.find((m) => m.number === module);
+		this.lectures = lectures;
+		this.lecture = lectures.find((m) => m.number === lecture);
 		this.currView = "week";
 		this.g = this.buildGraph();
 	}
 
 	switchView(view) {
-		this.removeModuleBoxes();
+		this.removeLectureBoxes();
 		switch(view) {
-			case "week": this.showWeek(); break;
-			case "module": this.showModule(); break;
+			case "week": this.showLecture(); break;
+			case "lecture": this.showLectureUnstructured(); break;
 			case "all": this.showAll(); break;
 		}
 	}
@@ -57,7 +57,7 @@ class Graaf {
 			el.addTo(graph);
 			c.element = el;
 
-			if(this.module.cells.includes(c)) {
+			if(this.lecture.cells.includes(c)) {
 				c.element.attr('./filter', {
 					name: 'highlight',
 					args: {
@@ -80,10 +80,10 @@ class Graaf {
 			link.addTo(graph);
 			e.link = link;
 
-			this.module.addEdgeIfRelated(e);
+			this.lecture.addEdgeIfRelated(e);
 		});
 
-		this.module.makeModuleBoxes();
+		this.lecture.makeLectureBoxes();
 
 		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
 			nodeSep: 10,
@@ -113,9 +113,9 @@ class Graaf {
 
 	}
 
-	showModule() {
+	showLectureUnstructured() {
 		this.cells.forEach((c) => {
-			if (!(this.module.cells.includes(c) || this.module.prevCells.includes(c) || this.module.nextCells.includes(c))) {
+			if (!(this.lecture.cells.includes(c) || this.lecture.prevCells.includes(c) || this.lecture.nextCells.includes(c))) {
 				c.element.remove();
 			}
 		});
@@ -127,51 +127,53 @@ class Graaf {
 		});
 	}
 
-	showWeek() {
-		this.showModule();
+	showLecture() {
+		this.showLectureUnstructured();
 
-		this.module.cells.forEach((c) => {
-			this.module.elNow.embed(c.element);
+		this.lecture.cells.forEach((c) => {
+			this.lecture.elNow.embed(c.element);
 		});
 
-		this.module.prevCells.forEach((c) => {
-			this.module.elPrev.embed(c.element);
+		this.lecture.prevCells.forEach((c) => {
+			this.lecture.elPrev.embed(c.element);
 		});
 
-		this.module.nextCells.forEach((c) => {
-			this.module.elNext.embed(c.element);
+		this.lecture.nextCells.forEach((c) => {
+			this.lecture.elNext.embed(c.element);
 		});
 
-		this.module.elNow.addTo(this.g);
-		this.module.elPrev.addTo(this.g);
-		this.module.elNext.addTo(this.g);
+		this.lecture.showStructured();
+
+		this.lecture.elNow.addTo(this.g);
+		this.lecture.elPrev.addTo(this.g);
+		this.lecture.elNext.addTo(this.g);
 
 		let positionBelow = (cells, x, y, yMargin = 40) => {
 			for (let i = 0; i < cells.length; i++) {
-				cells[i].element.position(x + (this.module.width - cells[i].width)/2, yMargin + y + (cells[i].height + yMargin)*i);
+				cells[i].element.position(x + (this.lecture.width - cells[i].width)/2, yMargin + y + (cells[i].height + yMargin)*i);
 			}
 		};
-		positionBelow(this.module.prevCells, this.module.margin, this.module.margin);
-		positionBelow(this.module.cells, this.module.margin + this.module.width, this.module.margin);
-		positionBelow(this.module.nextCells, this.module.margin + this.module.width*2, this.module.margin);
+		positionBelow(this.lecture.prevCells, this.lecture.margin, this.lecture.margin);
+		positionBelow(this.lecture.cells, this.lecture.margin + this.lecture.width, this.lecture.margin);
+		positionBelow(this.lecture.nextCells, this.lecture.margin + this.lecture.width*2, this.lecture.margin);
 	}
 
-	removeModuleBoxes() {
-		this.module.cells.forEach((c) => {
-			this.module.elNow.unembed(c.element);
+	removeLectureBoxes() {
+		this.lecture.cells.forEach((c) => {
+			this.lecture.elNow.unembed(c.element);
 		});
 
-		this.module.nextCells.forEach((c) => {
-			this.module.elNext.unembed(c.element);
+		this.lecture.nextCells.forEach((c) => {
+			this.lecture.elNext.unembed(c.element);
 		});
 
-		this.module.prevCells.forEach((c) => {
-			this.module.elPrev.unembed(c.element);
+		this.lecture.prevCells.forEach((c) => {
+			this.lecture.elPrev.unembed(c.element);
 		});
 
-		this.module.elNow.remove();
-		this.module.elPrev.remove();
-		this.module.elNext.remove();
+		this.lecture.elNow.remove();
+		this.lecture.elPrev.remove();
+		this.lecture.elNext.remove();
 	}
 
 	makeSVGElement(name, svg) {

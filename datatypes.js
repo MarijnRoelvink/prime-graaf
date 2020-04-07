@@ -24,11 +24,11 @@ class Domain {
     }
 }
 
-class Module {
-    constructor(module) {
-        this.number = parseInt(module.number);
-        this.title = module.title;
-        this.cells = Object.values(module).slice(2).filter((v) => v !== "");
+class Lecture {
+    constructor(lecture) {
+        this.number = parseInt(lecture.number);
+        this.title = lecture.title;
+        this.cells = Object.values(lecture).slice(2).filter((v) => v !== "");
         this.prevCells = [];
         this.nextCells = [];
         this.elNow = {};
@@ -39,7 +39,7 @@ class Module {
         this.margin = 0;
     }
 
-    makeModuleBoxes() {
+    makeLectureBoxes() {
         this.width = 300;
         this.margin = 50;
         this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.margin);

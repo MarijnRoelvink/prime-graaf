@@ -1,14 +1,14 @@
 let state = {
-	module: 1,
+	lecture: 1,
 	graaf: null,
 };
 
 
 function init() {
-	state.module = parseInt(getUrlQuery("module", 1));
+	state.lecture = parseInt(getUrlQuery("lecture", 1));
 	getGraph((graph) => {
-		state.graaf = new Graaf(graph, state.module) ;
-		state.graaf.showWeek();
+		state.graaf = new Graaf(graph, state.lecture);
+		state.graaf.showLecture();
 	});
 }
 function switchView(view, el) {
