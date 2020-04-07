@@ -75,8 +75,8 @@ class Graaf {
 			link.source(e.from.element);
 			link.target(e.to.element);
 			link.attr('line/stroke', e.from.domain.color);
-			link.router('metro', {
-			});
+			// link.router('metro', {
+			// });
 			link.addTo(graph);
 			e.link = link;
 
@@ -142,7 +142,7 @@ class Graaf {
 			this.lecture.elNext.embed(c.element);
 		});
 
-		this.lecture.showStructured();
+		//this.lecture.showStructured();
 
 		this.lecture.elNow.addTo(this.g);
 		this.lecture.elPrev.addTo(this.g);
