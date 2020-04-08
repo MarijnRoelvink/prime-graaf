@@ -35,54 +35,15 @@ class Graaf {
 		});
 
 		this.cells.forEach((c) => {
-			c.height = 60;
-			c.width = 2.13*c.height;
-
-			let wraptext = joint.util.breakText(c.name, {
-				width: c.width
-			});
-			let el = new joint.shapes.standard[c.domain.domain]({
-				attrs: {
-					image: {
-						width: c.width,
-						height: c.height,
-						marginTop: '20px'
-					},
-					label: {
-						text: wraptext,
-					}
-				}
-			});
-			el.resize(c.width, c.height);
-			el.addTo(graph);
-			c.element = el;
-
-			if(this.lecture.cells.includes(c)) {
-				c.element.attr('./filter', {
-					name: 'highlight',
-					args: {
-						color: '#70AB37',
-						width: 6,
-						opacity: 1,
-						blur: 5
-					}
-				});
-			}
+			c.makeElement(graph, 2.13*60, 60);
 		});
 
 		this.edges.forEach((e) => {
-			let link = new joint.shapes.standard.Link();
-			link.source(e.from.element);
-			link.target(e.to.element);
-			link.attr('line/stroke', e.from.domain.color);
-			// link.router('metro', {
-			// });
-			link.addTo(graph);
-			e.link = link;
-
+			e.makeLink(graph);
 			this.lecture.addEdgeIfRelated(e);
 		});
 
+		this.lecture.makeCellsGlow();
 		this.lecture.makeLectureBoxes();
 
 		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
@@ -141,8 +102,6 @@ class Graaf {
 		this.lecture.nextCells.forEach((c) => {
 			this.lecture.elNext.embed(c.element);
 		});
-
-		//this.lecture.showStructured();
 
 		this.lecture.elNow.addTo(this.g);
 		this.lecture.elPrev.addTo(this.g);

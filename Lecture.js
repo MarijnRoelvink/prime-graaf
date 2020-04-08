@@ -13,6 +13,20 @@ class Lecture {
         this.margin = 0;
     }
 
+    makeCellsGlow() {
+        this.cells.forEach((c) => {
+            c.element.attr('./filter', {
+                name: 'highlight',
+                args: {
+                    color: '#70AB37',
+                    width: 6,
+                    opacity: 1,
+                    blur: 5
+                }
+            });
+        });
+    }
+
     makeLectureBoxes() {
         this.width = 300;
         this.margin = 50;

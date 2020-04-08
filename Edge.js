@@ -4,4 +4,15 @@ class Edge {
         this.to = to;
         this.link = {};
     }
+
+    makeLink(graph) {
+        let link = new joint.shapes.standard.Link();
+        link.source(this.from.element);
+        link.target(this.to.element);
+        link.attr('line/stroke', this.from.domain.color);
+        // link.router('metro', {
+        // });
+        link.addTo(graph);
+        this.link = link;
+    }
 }
