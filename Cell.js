@@ -5,6 +5,7 @@ class Cell {
         this.element = {};
         this.width = 0;
         this.height = 0;
+        this.pos = {x: 0, y: 0};
     }
 
     makeElement(graph, width, height) {

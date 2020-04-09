@@ -1,14 +1,19 @@
 let state = {
 	lecture: 1,
 	graaf: null,
+	editmode: false
 };
 
 
 function init() {
 	state.lecture = parseInt(getUrlQuery("lecture", 1));
+	state.editmode = !!parseInt(getUrlQuery("editmode", 0));
+	document.getElementById("save-layout").hidden = !state.editmode;
 	getGraph((graph) => {
 		state.graaf = new Graaf(graph, state.lecture);
-		state.graaf.showLecture();
+		state.graaf.getLayout(() => {
+			state.graaf.showLecture();
+		});
 	});
 }
 function switchView(view, el) {

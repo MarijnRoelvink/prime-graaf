@@ -15,24 +15,34 @@
     <script src="Domain.js"></script>
     <script src="Lecture.js"></script>
     <script src="csv-importer.js"></script>
+    <style>
+        #graaf {
+            width: 100%;
+            flex-grow: 2;
+        }
+    </style>
 </head>
 <body>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" href="#">Domains</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" onclick="switchView('all', this)">Overview</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" onclick="switchView('lecture', this)">Zoomed in</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" onclick="switchView('week', this)">This week</a>
-        </li>
-    </ul>
-    <div id="graaf"></div>
-    <div id="sub_view"></div>
+    <div class="d-flex flex-column w-100 h-100">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Domains</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchView('all', this)">Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchView('lecture', this)">Zoomed in</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" onclick="switchView('week', this)">This week</a>
+            </li>
+            <li class="nav-item">
+                <button id="save-layout" class="btn btn-primary ml-3 mt-1 mb-1" onclick="state.graaf.saveGraph()" hidden>Save</button>
+            </li>
+        </ul>
+        <div id="graaf"></div>
+    </div>
 </body>
 <script src="Graaf.js"></script>
 <script src="main.js"></script>

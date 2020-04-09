@@ -1,12 +1,13 @@
 class Graaf {
-	constructor({cells, edges, domains, lectures}, lecture) {
+	constructor({cells, edges, domains, lectures}, lecture, callback) {
 		this.cells = cells;
 		this.edges = edges;
 		this.domains = domains;
 		this.lectures = lectures;
 		this.lecture = lectures.find((m) => m.number === lecture);
 		this.currView = "week";
-		this.g = this.buildGraph();
+		this.g = {};
+		this.buildGraph();
 	}
 
 	switchView(view) {
@@ -18,15 +19,40 @@ class Graaf {
 		}
 	}
 
+	getLayout(callback) {
+		let self = this;
+		$.ajax({
+			url:"resources/graph.json",
+			dataType:'json',
+			error: function(status)
+			{
+				console.log("no layout has been defined yet");
+				callback();
+			},
+			success: function(data)
+			{
+				data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
+					let name = d.attrs.label.text.replace('\n', ' ');
+					console.log(name);
+					let cell = self.cells.find((c) => c.name === name);
+					cell.element.position(d.position.x, d.position.y);
+					cell.pos = d.position;
+				});
+				callback();
+			}
+		});
+	}
 
 	buildGraph() {
 		let graph = new joint.dia.Graph;
+		this.g = graph;
 
+		let div = document.getElementById('graaf');
 		let paper = new joint.dia.Paper({
-			el: document.getElementById('graaf'),
+			el: div,
 			model: graph,
-			width: window.innerWidth * 2,
-			height: window.innerHeight,
+			width: div.clientWidth,
+			height: div.clientHeight,
 			gridSize: 1
 		});
 
@@ -52,26 +78,24 @@ class Graaf {
 			rankDir: "TB"
 		});
 
-		paper.scale(0.8, 0.8);
+		this.cells.forEach((c) => {
+			c.pos.x = c.element.attributes.position.x;
+			c.pos.y = c.element.attributes.position.y;
+		});
+
+		paper.scale(0.7, 0.7);
 		return graph;
 	}
 
 	showAll() {
 		this.cells.forEach((c) => {
 			c.element.addTo(this.g);
+			c.element.position(c.pos.x, c.pos.y);
 		});
 
 		this.edges.forEach((e) => {
 			e.link.addTo(this.g);
 		});
-
-		let graphBBox = joint.layout.DirectedGraph.layout(this.g, {
-			nodeSep: 5,
-			edgeSep: 5,
-			rankDir: "TB",
-			ranker: "longest-path"
-		});
-
 	}
 
 	showLectureUnstructured() {
@@ -133,6 +157,17 @@ class Graaf {
 		this.lecture.elNow.remove();
 		this.lecture.elPrev.remove();
 		this.lecture.elNext.remove();
+	}
+
+	saveGraph() {
+		let download = function(content, fileName, contentType) {
+			let a = document.createElement("a");
+			let file = new Blob([content], {type: contentType});
+			a.href = URL.createObjectURL(file);
+			a.download = fileName;
+			a.click();
+		};
+		download(JSON.stringify(this.g.toJSON()), 'graph.json', 'JSON');
 	}
 
 	makeSVGElement(name, svg) {
