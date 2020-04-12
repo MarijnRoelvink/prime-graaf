@@ -1,0 +1,63 @@
+from;to
+Diagonalization;Discrete systems
+Diagonalization;Differential equations
+Diagonalization;Symmetric matrices
+Similarity;Diagonalization
+Similarity;Complex eigenvalues
+Eigenvalues and eigenvectors;Similarity
+Eigenvalues and eigenvectors;Characteristic equation
+Characteristic equation;Complex eigenvalues
+Characteristic equation;Similarity
+Complex eigenvalues;Discrete systems
+Complex eigenvalues;Differential equations
+Gram-Schmidt process;Symmetric matrices
+Coordinate vectors;Dimension and rank
+Coordinate vectors;Quadratic forms
+Coordinate vectors;Discrete systems
+Coordinate vectors;Differential equations
+Basis;Gram-Schmidt process
+Basis;Coordinate vectors
+Basis;Diagonalization
+Basis;Dimension and rank
+Subspaces;Basis
+Dimension and rank;Diagonalization
+Inner product;Orthogonality
+Orthogonality;Orthonormality
+Orthogonality;Orthogonal projections
+Orthonormality;Orthogonal projections
+Orthogonal projections;Gram-Schmidt process
+Orthogonal projections;Least-squares problems
+Spans;Subspaces
+Linear independence;Basis
+Linear independence;Inverse matrices
+Vectors;Orthonormality
+Vectors;Inner product
+Vectors;Vector equations
+Systems of linear equations;Vector equations
+Systems of linear equations;Matrices
+Systems of linear equations;Matrix equations
+Systems of linear equations;Least-squares problems
+Systems of linear equations;Homogeneous linear systems
+Matrices;Echelon forms
+Matrices;Matrix-vector product
+Matrices;Determinants
+Matrices;Inverse matrices
+Matrices;Matrix equations
+Echelon forms;Inverse matrices
+Echelon forms;Determinants
+Linear combinations;Spans
+Linear combinations;Matrix-vector product
+Vector equations;Linear combinations
+Homogeneous linear systems;Spans
+Homogeneous linear systems;Linear independence
+Matrix-vector product;Matrix equations
+Matrix-vector product;Linear transformations
+Matrix-vector product;Inverse matrices
+Matrix-vector product;Eigenvalues and eigenvectors
+Determinants;Characteristic equation
+Determinants;Inverse matrices
+Symmetric matrices;Quadratic forms
+Constraint optimization;Singular value decomposition
+Quadratic forms;Constraint optimization
+Linear transformations;Area & Volume
+Determinants;Area & Volume

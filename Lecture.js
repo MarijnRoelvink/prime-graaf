@@ -13,6 +13,15 @@ class Lecture {
         this.margin = 0;
     }
 
+    cellIsRelated(c) {
+        return (this.cells.includes(c) || this.prevCells.includes(c) || this.nextCells.includes(c));
+    }
+
+    edgeIsRelated(e) {
+        return this.cells.includes(e.from) || this.cells.includes(e.to);
+
+    }
+
     makeCellsGlow() {
         this.cells.forEach((c) => {
             c.element.attr('./filter', {
@@ -47,7 +56,7 @@ class Lecture {
         });
     }
 
-    addEdgeIfRelated(e) {
+    addEdgeEndIfRelated(e) {
         let isFrom = this.cells.includes(e.from);
         let isTo = this.cells.includes(e.to);
         if (isFrom && !isTo) {

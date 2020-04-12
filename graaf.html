@@ -26,16 +26,16 @@
     <div class="d-flex flex-column w-100 h-100">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" href="#">Domains</a>
+                <a class="nav-link active" onclick="switchView('lecture', this)">This lecture</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchView('unstructured', this)">Zoomed in</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" onclick="switchView('all', this)">Overview</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" onclick="switchView('lecture', this)">Zoomed in</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" onclick="switchView('week', this)">This week</a>
+                <a class="nav-link" onclick="switchView('domains', this)">Domains</a>
             </li>
             <li class="nav-item">
                 <button id="save-layout" class="btn btn-primary ml-3 mt-1 mb-1" onclick="state.graaf.saveGraph()" hidden>Save</button>

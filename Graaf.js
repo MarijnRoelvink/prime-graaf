@@ -13,33 +13,64 @@ class Graaf {
 	switchView(view) {
 		this.removeLectureBoxes();
 		switch(view) {
-			case "week": this.showLecture(); break;
-			case "lecture": this.showLectureUnstructured(); break;
+			case "lecture": this.showLecture(); break;
+			case "unstructured": this.showLectureUnstructured(); break;
 			case "all": this.showAll(); break;
+			case "domains": this.showDomains(); break;
 		}
 	}
 
-	getLayout(callback) {
+	getLayout(dir, callback) {
 		let self = this;
-		$.ajax({
-			url:"resources/graph.json",
-			dataType:'json',
-			error: function(status)
-			{
-				console.log("no layout has been defined yet");
-				callback();
-			},
-			success: function(data)
-			{
-				data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
-					let name = d.attrs.label.text.replace('\n', ' ');
-					console.log(name);
-					let cell = self.cells.find((c) => c.name === name);
-					cell.element.position(d.position.x, d.position.y);
-					cell.pos = d.position;
-				});
-				callback();
-			}
+
+		let getDomainLayout = (cb) => {
+			$.ajax({
+				url: dir + "domain_graph.json",
+				dataType:'json',
+				error: function(status)
+				{
+					console.log("no layout for the domain has been defined yet");
+					cb();
+				},
+				success: function(data)
+				{
+					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
+						let name = d.attrs.label.text.replace('\n', ' ');
+						console.log(name);
+						let domain = self.domains.find((c) => c.domain === name);
+						domain.cell.element.position(d.position.x, d.position.y);
+						domain.cell.pos = d.position;
+					});
+					cb();
+				}
+			});
+		};
+
+		let getMainLayout = (cb) => {
+			$.ajax({
+				url: dir + "graph.json",
+				dataType:'json',
+				error: function(status)
+				{
+					console.log("no layout has been defined yet");
+					cb();
+				},
+				success: function(data)
+				{
+					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
+						let name = d.attrs.label.text.replace('\n', ' ');
+						console.log(name);
+						let cell = self.cells.find((c) => c.name === name);
+						cell.element.position(d.position.x, d.position.y);
+						cell.pos = d.position;
+					});
+					cb();
+				}
+			});
+		};
+
+		getMainLayout(() => {
+			getDomainLayout(callback);
 		});
 	}
 
@@ -58,6 +89,13 @@ class Graaf {
 
 		this.domains.forEach((d) => {
 			this.makeSVGElement(d.domain, d.svg);
+			d.makeElement(graph, 2.13*60, 60);
+		});
+
+		this.domains.forEach((d) => {
+			d.edges.forEach((de) => {
+				de.makeLink(graph, false);
+			});
 		});
 
 		this.cells.forEach((c) => {
@@ -66,7 +104,7 @@ class Graaf {
 
 		this.edges.forEach((e) => {
 			e.makeLink(graph);
-			this.lecture.addEdgeIfRelated(e);
+			this.lecture.addEdgeEndIfRelated(e);
 		});
 
 		this.lecture.makeCellsGlow();
@@ -88,6 +126,7 @@ class Graaf {
 	}
 
 	showAll() {
+		this.showNone();
 		this.cells.forEach((c) => {
 			c.element.addTo(this.g);
 			c.element.position(c.pos.x, c.pos.y);
@@ -98,10 +137,41 @@ class Graaf {
 		});
 	}
 
-	showLectureUnstructured() {
+	showNone() {
 		this.cells.forEach((c) => {
-			if (!(this.lecture.cells.includes(c) || this.lecture.prevCells.includes(c) || this.lecture.nextCells.includes(c))) {
+			c.element.remove();
+		});
+
+		this.domains.forEach((d) => {
+			d.cell.element.remove();
+		});
+	}
+
+	showDomains() {
+		this.showNone();
+		this.domains.forEach((d) => {
+			d.cell.element.addTo(this.g);
+		});
+		this.domains.forEach((d) => {
+			d.edges.forEach((e) => {
+				e.link.addTo(this.g);
+			});
+		});
+	}
+
+	showLectureUnstructured() {
+		this.showNone();
+		this.cells.forEach((c) => {
+			if (!this.lecture.cellIsRelated(c)) {
 				c.element.remove();
+			} else {
+				c.element.addTo(this.g);
+			}
+		});
+
+		this.edges.forEach((e) => {
+			if(this.lecture.edgeIsRelated(e)) {
+				e.link.addTo(this.g);
 			}
 		});
 

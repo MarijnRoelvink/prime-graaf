@@ -5,14 +5,16 @@ class Edge {
         this.link = {};
     }
 
-    makeLink(graph) {
+    makeLink(graph, addToGraph = true) {
         let link = new joint.shapes.standard.Link();
         link.source(this.from.element);
         link.target(this.to.element);
         link.attr('line/stroke', this.from.domain.color);
         // link.router('metro', {
         // });
-        link.addTo(graph);
+        if(addToGraph) {
+            link.addTo(graph);
+        }
         this.link = link;
     }
 }

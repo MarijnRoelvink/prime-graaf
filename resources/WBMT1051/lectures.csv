@@ -1,0 +1,30 @@
+number;title;cell_1;cell_2;cell_3;cell_4;cell_5;cell_6;cell_7;cell_8;cell_9;cell_10;cell_11;cell_12;cell_13;cell_14;cell_15;cell_16;cell_17;cell_18;cell_19;cell_20;cell_21;cell_22;cell_23;cell_24;cell_25;cell_26;cell_27;cell_28;cell_29;cell_30;cell_31;cell_32;cell_33;cell_34;cell_35;cell_36;cell_37
+1;Linear systems and echelon forms;Systems of linear equations;Echelon forms;Matrices;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+2;Spans and vector equations;Echelon forms;Linear combinations;Spans;Vector equations;Vectors;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+3;Matrix-vector product and solution sets;Homogeneous linear systems;Matrix equations;Matrix-vector product;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+4;Linear independence;Linear independence;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+5;Linear transformations;Linear transformations;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+6;Matrix operations;Matrices;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+7;Invertibility of matrices;Inverse matrices;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+8;Academic reasoning - session 1;Systems of linear equations;Echelon forms;Matrices;Linear combinations;Spans;Vector equations;Vectors;Homogeneous linear systems;Matrix equations;Matrix-vector product;Linear independence;Linear transformations;Inverse matrices;;;;;;;;;;;;;;;;;;;;;;;;
+9;Subspaces;Subspaces;Basis;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+10;Coordinates and dimension;Coordinate vectors;Dimension and rank;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+11;Inner product and orthogonality;Inner product;Orthogonality;Orthonormality;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+12;Orthogonal projections;Orthogonal projections;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+13;The Gram-Schmidt process;Gram-Schmidt process;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+14;Least-squares problems;Least-squares problems;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+15;Academic reasoning - session 2;Subspaces;Basis;Coordinate vectors;Dimension and rank;Inner product;Orthogonality;Orthonormality;Orthogonal projections;Gram-Schmidt process;Least-squares problems;;;;;;;;;;;;;;;;;;;;;;;;;;;
+16;Determinants;Determinants;Inverse matrices;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+17;Applications of determinants;Area & Volume;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+18;Eigenvalues and eigenvectors;Eigenvalues and eigenvectors;Characteristic equation;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+19;Diagonalization;Diagonalization;Similarity;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+20;Complex eigenvalues;Complex eigenvalues;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+21;Academic reasoning - session 3;Determinants;Inverse matrices;Area & Volume;Eigenvalues and eigenvectors;Characteristic equation;Diagonalization;Similarity;Complex eigenvalues;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+22;Discrete dynamical systems;Discrete systems;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+23;Systems of differential equations;Differential equations;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+24;Symmetric matrices;Symmetric matrices;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+25;Quadratic forms;Quadratic forms;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+26;Constrained optimization;Constraint optimization;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+27;Singular Value Decomposition;Singular value decomposition;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+28;Academic reasoning - session 4;Discrete systems;Differential equations;Symmetric matrices;Quadratic forms;Constraint optimization;Singular value decomposition;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+29;Free lecture;Systems of linear equations;Echelon forms;Matrices;Linear combinations;Spans;Vector equations;Vectors;Homogeneous linear systems;Matrix equations;Matrix-vector product;Linear independence;Linear transformations;Inverse matrices;Subspaces;Basis;Coordinate vectors;Dimension and rank;Inner product;Orthogonality;Orthonormality;Orthogonal projections;Gram-Schmidt process;Least-squares problems;Determinants;Inverse matrices;Area & Volume;Eigenvalues and eigenvectors;Characteristic equation;Diagonalization;Similarity;Complex eigenvalues;Discrete systems;Differential equations;Symmetric matrices;Quadratic forms;Constraint optimization;Singular value decomposition

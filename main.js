@@ -1,7 +1,8 @@
 let state = {
 	lecture: 1,
 	graaf: null,
-	editmode: false
+	editmode: false,
+	dir: "resources/WBMT1051/"
 };
 
 
@@ -9,9 +10,9 @@ function init() {
 	state.lecture = parseInt(getUrlQuery("lecture", 1));
 	state.editmode = !!parseInt(getUrlQuery("editmode", 0));
 	document.getElementById("save-layout").hidden = !state.editmode;
-	getGraph((graph) => {
+	new CSVImporter(state.dir).getGraph((graph) => {
 		state.graaf = new Graaf(graph, state.lecture);
-		state.graaf.getLayout(() => {
+		state.graaf.getLayout(state.dir, () => {
 			state.graaf.showLecture();
 		});
 	});
