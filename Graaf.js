@@ -7,7 +7,14 @@ class Graaf {
 		this.lecture = lectures.find((m) => m.number === lecture);
 		this.currView = "week";
 		this.g = {};
+		this.paper = {};
+		this.lastPos = {
+			x: 0,
+				y: 0
+		};
+		this.scale = {sx: 0.7, sy: 0.7};
 		this.buildGraph();
+		this.initControls();
 	}
 
 	switchView(view) {
@@ -20,31 +27,37 @@ class Graaf {
 		}
 	}
 
-	getLayout(dir, callback) {
+	initControls() {
 		let self = this;
 
-		let getDomainLayout = (cb) => {
-			$.ajax({
-				url: dir + "domain_graph.json",
-				dataType:'json',
-				error: function(status)
-				{
-					console.log("no layout for the domain has been defined yet");
-					cb();
-				},
-				success: function(data)
-				{
-					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
-						let name = d.attrs.label.text.replace('\n', ' ');
-						console.log(name);
-						let domain = self.domains.find((c) => c.domain === name);
-						domain.cell.element.position(d.position.x, d.position.y);
-						domain.cell.pos = d.position;
-					});
-					cb();
-				}
-			});
+		let startMoving = function(evt, x, y) {
+			console.log("pointerdown", x, y);
+			self.lastPos = {x: x*self.scale.sx, y: y*self.scale.sy};
 		};
+
+		let move = function(evt, x, y) {
+			self.paper.translate((evt.offsetX - self.lastPos.x), (evt.offsetY - self.lastPos.y));
+		};
+
+		let scale = function (evt, x, y, delta) {
+			console.log(delta);
+			self.scale = {
+				sx: self.scale.sx + 0.025*delta,
+				sy: self.scale.sy + 0.025*delta
+			};
+			self.paper.scale(self.scale.sx, self.scale.sy);
+		};
+		this.paper.on('blank:pointerdown', startMoving);
+		this.paper.on('blank:pointermove', move);
+		
+		this.paper.on('blank:mousewheel', scale);
+		this.paper.on('element:mousewheel', function (cv, evt, x, y, delta) {
+			scale(evt, x, y, delta);
+		});
+	}
+
+	getLayout(dir, callback) {
+		let self = this;
 
 		let getMainLayout = (cb) => {
 			$.ajax({
@@ -69,6 +82,28 @@ class Graaf {
 			});
 		};
 
+		let getDomainLayout = (cb) => {
+			$.ajax({
+				url: dir + "domain_graph.json",
+				dataType:'json',
+				error: function(status)
+				{
+					console.log("no layout for the domain has been defined yet");
+					cb();
+				},
+				success: function(data)
+				{
+					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
+						let name = d.attrs.label.text.replace('\n', ' ');
+						let domain = self.domains.find((c) => c.domain === name);
+						domain.cell.element.position(d.position.x, d.position.y);
+						domain.cell.pos = d.position;
+					});
+					cb();
+				}
+			});
+		};
+
 		getMainLayout(() => {
 			getDomainLayout(callback);
 		});
@@ -79,7 +114,7 @@ class Graaf {
 		this.g = graph;
 
 		let div = document.getElementById('graaf');
-		let paper = new joint.dia.Paper({
+		this.paper = new joint.dia.Paper({
 			el: div,
 			model: graph,
 			width: div.clientWidth,
@@ -122,7 +157,7 @@ class Graaf {
 			c.pos.y = c.element.attributes.position.y;
 		});
 
-		paper.scale(0.7, 0.7);
+		this.paper.scale(this.scale.sx, this.scale.sy);
 		return graph;
 	}
 
@@ -209,9 +244,9 @@ class Graaf {
 				cells[i].element.position(x + (this.lecture.width - cells[i].width)/2, yMargin + y + (cells[i].height + yMargin)*i);
 			}
 		};
-		positionBelow(this.lecture.prevCells, this.lecture.margin, this.lecture.margin);
-		positionBelow(this.lecture.cells, this.lecture.margin + this.lecture.width, this.lecture.margin);
-		positionBelow(this.lecture.nextCells, this.lecture.margin + this.lecture.width*2, this.lecture.margin);
+		positionBelow(this.lecture.prevCells, this.lecture.margin.x, this.lecture.margin.y);
+		positionBelow(this.lecture.cells, this.lecture.margin.x + this.lecture.width, this.lecture.margin.y);
+		positionBelow(this.lecture.nextCells, this.lecture.margin.x + this.lecture.width*2, this.lecture.margin.y);
 	}
 
 	removeLectureBoxes() {

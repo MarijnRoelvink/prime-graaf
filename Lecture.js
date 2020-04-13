@@ -10,7 +10,10 @@ class Lecture {
 		this.elNext = {};
 		this.width = 0;
 		this.height = 0;
-		this.margin = 0;
+		this.margin = {
+		    x: 0,
+            y: 0
+        };
 	}
 
 	orderForLayout() {
@@ -70,8 +73,11 @@ class Lecture {
 
 	makeLectureBoxes() {
 		this.width = 300;
-		this.margin = 50;
-		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.margin);
+		this.margin = {
+		    x: 50,
+            y: 50
+        };
+		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.margin.y);
 
 		this.elPrev = this.makeBox(0, 'Previous topics');
 		this.elNow = this.makeBox(this.width, 'This lecture');
@@ -83,8 +89,9 @@ class Lecture {
 
 		return new joint.shapes.basic.Rect({
 			size: {width: this.width, height: this.height},
-			position: {x: this.margin + xOffset, y: this.margin},
-			attrs: {rect: {fill: 'rgba(255, 255, 255, 0)'}, text: {text: text, refY: refY}}
+			position: {x: this.margin.x + xOffset, y: this.margin.y},
+			attrs: {rect: {fill: 'rgba(255, 255, 255, 0)', style:{'pointer-events':'none'}},
+                text: {text: text, refY: refY}}
 		});
 	}
 
