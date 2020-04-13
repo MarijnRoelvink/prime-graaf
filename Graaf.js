@@ -93,7 +93,7 @@ class Graaf {
 		});
 
 		this.domains.forEach((d) => {
-			d.edges.forEach((de) => {
+			d.cell.outGoingEdges.forEach((de) => {
 				de.makeLink(graph, false);
 			});
 		});
@@ -154,7 +154,7 @@ class Graaf {
 			d.cell.element.addTo(this.g);
 		});
 		this.domains.forEach((d) => {
-			d.edges.forEach((e) => {
+			d.cell.outGoingEdges.forEach((e) => {
 				e.link.addTo(this.g);
 			});
 		});

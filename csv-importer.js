@@ -11,7 +11,8 @@ class CSVImporter {
 					let to = de.to;
 					de.from = domains.find((d) => from === d.domain).cell;
 					de.to = domains.find((d) => to === d.domain).cell;
-					de.from.domain.edges.push(de);
+					de.from.outGoingEdges.push(de);
+					de.to.inComingEdges.push(de);
 				});
 				this.getCells((cells) => {
 					cells.forEach((c) => {

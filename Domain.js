@@ -3,7 +3,6 @@ class Domain {
         this.domain = domain;
         this.svg = svg;
         this.color = color;
-        this.edges = [];
         this.cell = new Cell({name: domain, domain: this});
     }
 
