@@ -109,6 +109,7 @@ class Graaf {
 
 		this.lecture.makeCellsGlow();
 		this.lecture.makeLectureBoxes();
+		this.lecture.orderForLayout();
 
 		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
 			nodeSep: 10,
@@ -176,9 +177,11 @@ class Graaf {
 		});
 
 		let graphBBox = joint.layout.DirectedGraph.layout(this.g, {
-			nodeSep: 20,
+			nodeSep: 30,
 			edgeSep: 20,
-			rankDir: "TB"
+			rankDir: "TB",
+			marginY: 20,
+			marginX: 20
 		});
 	}
 

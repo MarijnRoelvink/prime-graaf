@@ -31,6 +31,8 @@ class CSVImporter {
 								let to = e.to;
 								e.from = cells.find((c) => c.name === from);
 								e.to = cells.find((c) => c.name === to);
+								e.from.outGoingEdges.push(e);
+								e.to.inComingEdges.push(e);
 							});
 							callback({cells: cells, domains: domains, edges: edges, lectures: lectures});
 						});

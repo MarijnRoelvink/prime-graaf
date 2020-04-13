@@ -2,6 +2,8 @@ class Cell {
     constructor({name, domain}) {
         this.name = name;
         this.domain = domain;
+        this.outGoingEdges = [];
+        this.inComingEdges = [];
         this.element = {};
         this.width = 0;
         this.height = 0;
