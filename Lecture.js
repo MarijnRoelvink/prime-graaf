@@ -88,7 +88,7 @@ class Lecture {
             x: (this.width - this.cells[0].width) / 2,
             y: 40
         };
-		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.padding.y);
+		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.padding.y) + this.padding.y;
 
         this.margin = {
             x: (paper.options.width/scale.sx - 3 * this.width) / 2,
