@@ -11,9 +11,13 @@ class Lecture {
 		this.width = 0;
 		this.height = 0;
 		this.margin = {
-		    x: 0,
-            y: 0
-        };
+			x: 0,
+			y: 0
+		};
+		this.padding = {
+			x: 0,
+			y: 0
+		}
 	}
 
 	orderForLayout() {
@@ -43,9 +47,9 @@ class Lecture {
 			return res.sort((c1, c2) => c2.count - c1.count).map((c) => c.cell);
 		};
 
-        this.prevCells = orderFittingly(this.prevCells, "outGoingEdges", "to");
+		this.prevCells = orderFittingly(this.prevCells, "outGoingEdges", "to");
 
-        this.nextCells = orderFittingly(this.nextCells, "inComingEdges", "from");
+		this.nextCells = orderFittingly(this.nextCells, "inComingEdges", "from");
 	}
 
 	cellIsRelated(c) {
@@ -71,13 +75,25 @@ class Lecture {
 		});
 	}
 
-	makeLectureBoxes() {
+	positionCells(cells, x, y) {
+		for (let i = 0; i < cells.length; i++) {
+			cells[i].element.position(x + this.padding.x, this.padding.y + y + (cells[i].height + this.padding.y) * i);
+		}
+	}
+
+	makeLectureBoxes(paper, scale) {
 		this.width = 300;
-		this.margin = {
-		    x: 50,
-            y: 50
+
+        this.padding = {
+            x: (this.width - this.cells[0].width) / 2,
+            y: 40
         };
-		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.margin.y);
+		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.padding.y);
+
+        this.margin = {
+            x: (paper.options.width/scale.sx - 3 * this.width) / 2,
+            y: 100
+        };
 
 		this.elPrev = this.makeBox(0, 'Previous topics');
 		this.elNow = this.makeBox(this.width, 'This lecture');
@@ -90,8 +106,19 @@ class Lecture {
 		return new joint.shapes.basic.Rect({
 			size: {width: this.width, height: this.height},
 			position: {x: this.margin.x + xOffset, y: this.margin.y},
-			attrs: {rect: {fill: 'rgba(255, 255, 255, 0)', style:{'pointer-events':'none'}},
-                text: {text: text, refY: refY}}
+			attrs: {
+				rect: {
+					fill: 'rgba(255, 255, 255, 0)',
+					style: {'pointer-events': 'none'}
+				},
+				text: {
+					text: text,
+					refY: refY,
+					fontFamily: 'Computer Modern Bright',
+					fontSize: '20px',
+					fontWeight: 'bold'
+				}
+			}
 		});
 	}
 

@@ -15,7 +15,7 @@ class Cell {
         this.width = width;
 
         let wraptext = joint.util.breakText(this.name, {
-            width: this.width
+            width: this.width*0.8
         });
         let el = new joint.shapes.standard[this.domain.domain]({
             attrs: {
@@ -26,6 +26,8 @@ class Cell {
                 },
                 label: {
                     text: wraptext,
+                    fontFamily: 'Computer Modern Bright',
+                    fontSize: '20px'
                 }
             }
         });

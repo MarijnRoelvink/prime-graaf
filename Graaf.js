@@ -31,7 +31,6 @@ class Graaf {
 		let self = this;
 
 		let startMoving = function(evt, x, y) {
-			console.log("pointerdown", x, y);
 			self.lastPos = {x: x*self.scale.sx, y: y*self.scale.sy};
 		};
 
@@ -40,7 +39,6 @@ class Graaf {
 		};
 
 		let scale = function (evt, x, y, delta) {
-			console.log(delta);
 			self.scale = {
 				sx: self.scale.sx + 0.025*delta,
 				sy: self.scale.sy + 0.025*delta
@@ -122,9 +120,10 @@ class Graaf {
 			gridSize: 1
 		});
 
+		let height = 70;
 		this.domains.forEach((d) => {
 			this.makeSVGElement(d.domain, d.svg);
-			d.makeElement(graph, 2.13*60, 60);
+			d.makeElement(graph, 2.13*height, height);
 		});
 
 		this.domains.forEach((d) => {
@@ -134,7 +133,7 @@ class Graaf {
 		});
 
 		this.cells.forEach((c) => {
-			c.makeElement(graph, 2.13*60, 60);
+			c.makeElement(graph, 2.13*height, height);
 		});
 
 		this.edges.forEach((e) => {
@@ -143,13 +142,13 @@ class Graaf {
 		});
 
 		this.lecture.makeCellsGlow();
-		this.lecture.makeLectureBoxes();
+		this.lecture.makeLectureBoxes(this.paper, this.scale);
 		this.lecture.orderForLayout();
 
 		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
 			nodeSep: 10,
 			edgeSep: 10,
-			rankDir: "TB"
+			rankDir: "LR"
 		});
 
 		this.cells.forEach((c) => {
@@ -215,8 +214,8 @@ class Graaf {
 			nodeSep: 30,
 			edgeSep: 20,
 			rankDir: "TB",
-			marginY: 20,
-			marginX: 20
+			marginY: 40,
+			marginX: 40
 		});
 	}
 
@@ -239,14 +238,9 @@ class Graaf {
 		this.lecture.elPrev.addTo(this.g);
 		this.lecture.elNext.addTo(this.g);
 
-		let positionBelow = (cells, x, y, yMargin = 40) => {
-			for (let i = 0; i < cells.length; i++) {
-				cells[i].element.position(x + (this.lecture.width - cells[i].width)/2, yMargin + y + (cells[i].height + yMargin)*i);
-			}
-		};
-		positionBelow(this.lecture.prevCells, this.lecture.margin.x, this.lecture.margin.y);
-		positionBelow(this.lecture.cells, this.lecture.margin.x + this.lecture.width, this.lecture.margin.y);
-		positionBelow(this.lecture.nextCells, this.lecture.margin.x + this.lecture.width*2, this.lecture.margin.y);
+		this.lecture.positionCells(this.lecture.prevCells, this.lecture.margin.x, this.lecture.margin.y);
+		this.lecture.positionCells(this.lecture.cells, this.lecture.margin.x + this.lecture.width, this.lecture.margin.y);
+		this.lecture.positionCells(this.lecture.nextCells, this.lecture.margin.x + this.lecture.width*2, this.lecture.margin.y);
 	}
 
 	removeLectureBoxes() {
