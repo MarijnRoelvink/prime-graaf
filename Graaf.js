@@ -3,51 +3,57 @@ class Graaf {
 		this.cells = cells;
 		this.edges = edges;
 		this.domains = domains;
-		this.lectures = lectures;
 		this.lecture = lectures.find((m) => m.number === lecture);
-		this.currView = "week";
+		this.currView = "lecture";
 		this.g = {};
 		this.paper = {};
 		this.lastPos = {
 			x: 0,
-				y: 0
+			y: 0
 		};
 		this.scale = {sx: 0.7, sy: 0.7};
+		this.transitionTime = 1000;
 		this.buildGraph();
 		this.initControls();
 	}
 
 	switchView(view) {
-		this.removeLectureBoxes();
-		switch(view) {
-			case "lecture": this.showLecture(); break;
-			case "unstructured": this.showLectureUnstructured(); break;
-			case "all": this.showAll(); break;
-			case "domains": this.showDomains(); break;
+		this.lecture.removeLectureBoxes();
+		switch (view) {
+			case "lecture":
+				this.showLecture(this.currView);
+				break;
+			case "all":
+				this.showAll(this.currView);
+				break;
+			case "domains":
+				this.showDomains();
+				break;
 		}
+		this.currView = view;
 	}
 
 	initControls() {
 		let self = this;
 
-		let startMoving = function(evt, x, y) {
-			self.lastPos = {x: x*self.scale.sx, y: y*self.scale.sy};
+		let startMoving = function (evt, x, y) {
+			self.lastPos = {x: x * self.scale.sx, y: y * self.scale.sy};
 		};
 
-		let move = function(evt, x, y) {
+		let move = function (evt, x, y) {
 			self.paper.translate((evt.offsetX - self.lastPos.x), (evt.offsetY - self.lastPos.y));
 		};
 
 		let scale = function (evt, x, y, delta) {
 			self.scale = {
-				sx: self.scale.sx + 0.025*delta,
-				sy: self.scale.sy + 0.025*delta
+				sx: self.scale.sx + 0.025 * delta,
+				sy: self.scale.sy + 0.025 * delta
 			};
 			self.paper.scale(self.scale.sx, self.scale.sy);
 		};
 		this.paper.on('blank:pointerdown', startMoving);
 		this.paper.on('blank:pointermove', move);
-		
+
 		this.paper.on('blank:mousewheel', scale);
 		this.paper.on('element:mousewheel', function (cv, evt, x, y, delta) {
 			scale(evt, x, y, delta);
@@ -60,17 +66,14 @@ class Graaf {
 		let getMainLayout = (cb) => {
 			$.ajax({
 				url: dir + "graph.json",
-				dataType:'json',
-				error: function(status)
-				{
+				dataType: 'json',
+				error: function (status) {
 					console.log("no layout has been defined yet");
 					cb();
 				},
-				success: function(data)
-				{
+				success: function (data) {
 					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
 						let name = d.attrs.label.text.replace('\n', ' ');
-						console.log(name);
 						let cell = self.cells.find((c) => c.name === name);
 						cell.element.position(d.position.x, d.position.y);
 						cell.pos = d.position;
@@ -83,14 +86,12 @@ class Graaf {
 		let getDomainLayout = (cb) => {
 			$.ajax({
 				url: dir + "domain_graph.json",
-				dataType:'json',
-				error: function(status)
-				{
+				dataType: 'json',
+				error: function (status) {
 					console.log("no layout for the domain has been defined yet");
 					cb();
 				},
-				success: function(data)
-				{
+				success: function (data) {
 					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
 						let name = d.attrs.label.text.replace('\n', ' ');
 						let domain = self.domains.find((c) => c.domain === name);
@@ -112,6 +113,7 @@ class Graaf {
 		this.g = graph;
 
 		let div = document.getElementById('graaf');
+
 		this.paper = new joint.dia.Paper({
 			el: div,
 			model: graph,
@@ -120,10 +122,12 @@ class Graaf {
 			gridSize: 1
 		});
 
+		div.hidden = true;
+
 		let height = 70;
 		this.domains.forEach((d) => {
 			this.makeSVGElement(d.domain, d.svg);
-			d.makeElement(graph, 2.13*height, height);
+			d.makeElement(graph, 2.13 * height, height);
 		});
 
 		this.domains.forEach((d) => {
@@ -133,7 +137,7 @@ class Graaf {
 		});
 
 		this.cells.forEach((c) => {
-			c.makeElement(graph, 2.13*height, height);
+			c.makeElement(graph, 2.13 * height, height);
 		});
 
 		this.edges.forEach((e) => {
@@ -156,20 +160,36 @@ class Graaf {
 			c.pos.y = c.element.attributes.position.y;
 		});
 
+		this.showNone();
 		this.paper.scale(this.scale.sx, this.scale.sy);
+
+		div.hidden = false;
 		return graph;
 	}
 
-	showAll() {
-		this.showNone();
-		this.cells.forEach((c) => {
-			c.element.addTo(this.g);
-			c.element.position(c.pos.x, c.pos.y);
-		});
+	showAll(lastView) {
+		if (lastView === "domains") {
+			this.domains.forEach(d => {
+				d.cell.element.remove();
+			});
+			this.cells.forEach((c) => {
+				c.element.addTo(this.g);
+				c.element.position(c.domain.cell.pos.x, c.domain.cell.pos.y);
+				c.moveTo(c.pos.x, c.pos.y, this.transitionTime);
+			});
+			this.edges.forEach((e) => {
+				e.link.addTo(this.g);
+			});
+		} else if(lastView === "lecture") {
+			this.cells.forEach((c) => {
+				c.moveTo(c.pos.x, c.pos.y, this.transitionTime);
+				setTimeout(() => {c.element.addTo(this.g)}, this.transitionTime);
+			});
+			this.edges.forEach(e => {
+				setTimeout(() => {e.link.addTo(this.g)}, this.transitionTime);
+			})
+		}
 
-		this.edges.forEach((e) => {
-			e.link.addTo(this.g);
-		});
 	}
 
 	showNone() {
@@ -183,86 +203,90 @@ class Graaf {
 	}
 
 	showDomains() {
-		this.showNone();
-		this.domains.forEach((d) => {
-			d.cell.element.addTo(this.g);
-		});
-		this.domains.forEach((d) => {
-			d.cell.outGoingEdges.forEach((e) => {
-				e.link.addTo(this.g);
-			});
-		});
-	}
-
-	showLectureUnstructured() {
-		this.showNone();
 		this.cells.forEach((c) => {
-			if (!this.lecture.cellIsRelated(c)) {
-				c.element.remove();
-			} else {
-				c.element.addTo(this.g);
-			}
+			let domain = c.domain;
+			c.moveTo(domain.cell.pos.x, domain.cell.pos.y, this.transitionTime);
 		});
-
-		this.edges.forEach((e) => {
-			if(this.lecture.edgeIsRelated(e)) {
-				e.link.addTo(this.g);
-			}
-		});
-
-		let graphBBox = joint.layout.DirectedGraph.layout(this.g, {
-			nodeSep: 30,
-			edgeSep: 20,
-			rankDir: "TB",
-			marginY: 40,
-			marginX: 40
-		});
+		setTimeout(() => {
+			this.showNone();
+			this.domains.forEach((d) => {
+				d.cell.element.addTo(this.g);
+			});
+			this.domains.forEach((d) => {
+				d.cell.outGoingEdges.forEach((e) => {
+					e.link.addTo(this.g);
+				});
+			});
+		}, this.transitionTime);
 	}
 
-	showLecture() {
-		this.showLectureUnstructured();
+	showLecture(lastView) {
+		if (lastView === "all") {
+			this.cells.forEach((c) => {
+				if (!this.lecture.cellIsRelated(c)) {
+					setTimeout(() => c.element.remove(), 300);
+				}
+			});
+		} else if (lastView === "domains") {
+			this.domains.forEach(d => {
+				d.cell.element.remove();
+			});
+			this.cells.forEach((c) => {
+				if (this.lecture.cellIsRelated(c)) {
+					c.element.addTo(this.g);
+					c.element.position(c.domain.cell.pos.x, c.domain.cell.pos.y);
+				}
+			});
+			this.edges.forEach((e) => {
+				if (this.lecture.edgeIsRelated(e)) {
+					e.link.addTo(this.g);
+				}
+			});
+		} else {
+			this.cells.forEach((c) => {
+				if (this.lecture.cellIsRelated(c)) {
+					c.element.addTo(this.g);
+				}
+			});
 
-		this.lecture.cells.forEach((c) => {
-			this.lecture.elNow.embed(c.element);
-		});
+			this.edges.forEach((e) => {
+				if (this.lecture.edgeIsRelated(e)) {
+					e.link.addTo(this.g);
+				}
+			});
+		}
 
-		this.lecture.prevCells.forEach((c) => {
-			this.lecture.elPrev.embed(c.element);
-		});
+		let t = this.transitionTime;
+		if (lastView === "lecture") {
+			t = 0;
+		}
 
-		this.lecture.nextCells.forEach((c) => {
-			this.lecture.elNext.embed(c.element);
-		});
+		this.lecture.positionCells(this.lecture.prevCells, this.lecture.margin.x, this.lecture.margin.y, t);
+		this.lecture.positionCells(this.lecture.cells, this.lecture.margin.x + this.lecture.width, this.lecture.margin.y, t);
+		this.lecture.positionCells(this.lecture.nextCells, this.lecture.margin.x + this.lecture.width * 2, this.lecture.margin.y, t);
 
-		this.lecture.elNow.addTo(this.g);
-		this.lecture.elPrev.addTo(this.g);
-		this.lecture.elNext.addTo(this.g);
 
-		this.lecture.positionCells(this.lecture.prevCells, this.lecture.margin.x, this.lecture.margin.y);
-		this.lecture.positionCells(this.lecture.cells, this.lecture.margin.x + this.lecture.width, this.lecture.margin.y);
-		this.lecture.positionCells(this.lecture.nextCells, this.lecture.margin.x + this.lecture.width*2, this.lecture.margin.y);
-	}
+		setTimeout(() => {
+			this.lecture.cells.forEach((c) => {
+				this.lecture.elNow.embed(c.element);
+			});
 
-	removeLectureBoxes() {
-		this.lecture.cells.forEach((c) => {
-			this.lecture.elNow.unembed(c.element);
-		});
+			this.lecture.prevCells.forEach((c) => {
+				this.lecture.elPrev.embed(c.element);
+			});
 
-		this.lecture.nextCells.forEach((c) => {
-			this.lecture.elNext.unembed(c.element);
-		});
+			this.lecture.nextCells.forEach((c) => {
+				this.lecture.elNext.embed(c.element);
+			});
 
-		this.lecture.prevCells.forEach((c) => {
-			this.lecture.elPrev.unembed(c.element);
-		});
-
-		this.lecture.elNow.remove();
-		this.lecture.elPrev.remove();
-		this.lecture.elNext.remove();
+			this.lecture.elNow.addTo(this.g);
+			this.lecture.elPrev.addTo(this.g);
+			this.lecture.elNext.addTo(this.g);
+		}, t);
 	}
 
 	saveGraph() {
-		let download = function(content, fileName, contentType) {
+		let download = function (content, fileName, contentType) {
 			let a = document.createElement("a");
 			let file = new Blob([content], {type: contentType});
 			a.href = URL.createObjectURL(file);

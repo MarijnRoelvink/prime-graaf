@@ -75,10 +75,28 @@ class Lecture {
 		});
 	}
 
-	positionCells(cells, x, y) {
+	positionCells(cells, x, y, transitionTime) {
 		for (let i = 0; i < cells.length; i++) {
-			cells[i].element.position(x + this.padding.x, this.padding.y + y + (cells[i].height + this.padding.y) * i);
+			cells[i].moveTo(x + this.padding.x, this.padding.y + y + (cells[i].height + this.padding.y) * i, transitionTime);
 		}
+	}
+
+	removeLectureBoxes() {
+		this.cells.forEach((c) => {
+			this.elNow.unembed(c.element);
+		});
+
+		this.nextCells.forEach((c) => {
+			this.elNext.unembed(c.element);
+		});
+
+		this.prevCells.forEach((c) => {
+			this.elPrev.unembed(c.element);
+		});
+
+		this.elNow.remove();
+		this.elPrev.remove();
+		this.elNext.remove();
 	}
 
 	makeLectureBoxes(paper, scale) {

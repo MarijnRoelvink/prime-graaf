@@ -13,7 +13,7 @@ function init() {
 	new CSVImporter(state.dir).getGraph((graph) => {
 		state.graaf = new Graaf(graph, state.lecture);
 		state.graaf.getLayout(state.dir, () => {
-			state.graaf.showLecture();
+			state.graaf.showLecture("lecture");
 		});
 	});
 }

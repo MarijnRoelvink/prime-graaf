@@ -35,4 +35,19 @@ class Cell {
         el.addTo(graph);
         this.element = el;
     }
+
+    moveTo(x, y, transitionTime) {
+        this.element.transition('position/x', x, {
+            delay: 0,
+            duration: transitionTime,
+            timingFunction: joint.util.timing.linear,
+            valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+        });
+        this.element.transition('position/y', y, {
+            delay: 0,
+            duration: transitionTime,
+            timingFunction: joint.util.timing.linear,
+            valueFunction: function(a, b) { return function(t) { return a + (b - a) * t }}
+        });
+    }
 }
