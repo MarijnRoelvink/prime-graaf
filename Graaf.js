@@ -119,7 +119,8 @@ class Graaf {
 			model: graph,
 			width: div.clientWidth,
 			height: div.clientHeight,
-			gridSize: 1
+			gridSize: 10,
+			drawGrid: state.editmode? 'mesh' : false
 		});
 
 		div.hidden = true;
