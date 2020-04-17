@@ -32,28 +32,32 @@ class Graaf {
 
 		this.timeScaling(view);
 
-		switch (view) {
-			case "lecture":
-				this.showLecture(this.currView);
-				break;
-			case "all":
-				this.showAll(this.currView);
-				break;
-			case "domains":
-				this.showDomains();
-				break;
-		}
-		this.currView = view;
+		setTimeout(() => {
+			switch (view) {
+				case "lecture":
+					this.showLecture(this.currView);
+					break;
+				case "all":
+					this.showAll(this.currView);
+					break;
+				case "domains":
+					this.showDomains();
+					break;
+			}
+			this.currView = view;
+		}, this.transitionTime);
 	}
 
 	timeScaling(view) {
 		let oldS = this.scale[this.currView].s;
 		let newS = this.scale[view].s;
+		let totalT = this.transitionTime;
 		let currT = 0;
 		let interval = 10;
+
 		let fun = setInterval(() => {
-			if (currT < this.transitionTime) {
-				let progress = currT / this.transitionTime;
+			if (currT < totalT) {
+				let progress = currT / totalT;
 				this.paper.scale(oldS + (newS - oldS) * progress, oldS + (newS - oldS) * progress);
 				currT += interval;
 			} else {
@@ -135,6 +139,7 @@ class Graaf {
 						cell.pos = d.position;
 					});
 					cb();
+					self.centerOverview();
 				}
 			});
 		};
@@ -154,6 +159,7 @@ class Graaf {
 						domain.cell.element.position(d.position.x, d.position.y);
 						domain.cell.pos = d.position;
 					});
+					self.centerDomains();
 					cb();
 				}
 			});
@@ -222,6 +228,30 @@ class Graaf {
 
 		div.hidden = false;
 		return graph;
+	}
+
+	centerDomains(){
+		let left = this.domains.reduce((m, el) => Math.min(m, el.cell.pos.x), this.domains[0].cell.pos.x);
+		let right = this.domains.reduce((m, el) => Math.max(m, el.cell.pos.x), this.domains[0].cell.pos.x) + this.domains[0].cell.width;
+		let margin = (this.paper.options.width/this.scale["domains"].s - (right - left))/2;
+		this.domains.forEach(d => {
+			let c = d.cell;
+			c.pos.x += margin - left;
+			c.element.position(c.pos.x, c.pos.y);
+		});
+	}
+
+	centerOverview(){
+		let left = this.cells.reduce((m, el) => Math.min(m, el.pos.x), this.cells[0].pos.x);
+		let right = this.cells.reduce((m, el) => Math.max(m, el.pos.x), this.cells[0].pos.x) + this.cells[0].width;
+		let top = this.cells.reduce((m, el) => Math.min(m, el.pos.y), this.cells[0].pos.y);
+		this.scale["all"].s = this.paper.options.width / (right - left + 50);
+		let margin = 25;
+		this.cells.forEach(c => {
+			c.pos.x += margin - left;
+			c.pos.y += margin - top;
+			c.element.position(c.pos.x, c.pos.y);
+		});
 	}
 
 	showAll(lastView) {
