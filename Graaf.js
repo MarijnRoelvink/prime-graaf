@@ -11,7 +11,17 @@ class Graaf {
 			x: 0,
 			y: 0
 		};
-		this.scale = {sx: 0.7, sy: 0.7};
+		this.scale = {
+			lecture: {
+				s: 0.7
+			},
+			all: {
+				s: 0.5
+			},
+			domains: {
+				s: 1.0
+			}
+		};
 		this.transitionTime = 1000;
 		this.buildGraph();
 		this.initControls();
@@ -19,6 +29,9 @@ class Graaf {
 
 	switchView(view) {
 		this.lecture.removeLectureBoxes();
+
+		this.timeScaling(view);
+
 		switch (view) {
 			case "lecture":
 				this.showLecture(this.currView);
@@ -33,23 +46,66 @@ class Graaf {
 		this.currView = view;
 	}
 
+	timeScaling(view) {
+		let oldS = this.scale[this.currView].s;
+		let newS = this.scale[view].s;
+		let currT = 0;
+		let interval = 10;
+		let fun = setInterval(() => {
+			if (currT < this.transitionTime) {
+				let progress = currT / this.transitionTime;
+				this.paper.scale(oldS + (newS - oldS) * progress, oldS + (newS - oldS) * progress);
+				currT += interval;
+			} else {
+				console.log("stop");
+				clearInterval(fun);
+			}
+		}, interval);
+	}
+
 	initControls() {
 		let self = this;
 
 		let startMoving = function (evt, x, y) {
-			self.lastPos = {x: x * self.scale.sx, y: y * self.scale.sy};
+			self.lastPos = {x: x * self.scale[self.currView].s, y: y * self.scale[self.currView].s};
 		};
 
 		let move = function (evt, x, y) {
-			self.paper.translate((evt.offsetX - self.lastPos.x), (evt.offsetY - self.lastPos.y));
+			let dx = evt.offsetX - self.lastPos.x;
+			let dy = evt.offsetY - self.lastPos.y;
+			switch (self.currView) {
+				case "lecture": {
+					self.lecture.margin.x += dx;
+					self.lecture.margin.y += dy;
+					self.lecture.updatePosition();
+				}
+					break;
+				case "all": {
+					self.cells.forEach(c => {
+						c.pos.x += dx;
+						c.pos.y += dy;
+						c.element.position(c.pos.x, c.pos.y);
+					});
+				}
+					break;
+				case "domains": {
+					self.domains.forEach(d => {
+						let c = d.cell;
+						c.pos.x += dx;
+						c.pos.y += dy;
+						c.element.position(c.pos.x, c.pos.y);
+					});
+				}
+			}
+			self.lastPos.x += dx;
+			self.lastPos.y += dy;
 		};
 
 		let scale = function (evt, x, y, delta) {
-			self.scale = {
-				sx: self.scale.sx + 0.025 * delta,
-				sy: self.scale.sy + 0.025 * delta
+			self.scale[self.currView] = {
+				s: self.scale[self.currView].s + 0.025 * delta,
 			};
-			self.paper.scale(self.scale.sx, self.scale.sy);
+			self.paper.scale(self.scale[self.currView].s, self.scale[self.currView].s);
 		};
 		this.paper.on('blank:pointerdown', startMoving);
 		this.paper.on('blank:pointermove', move);
@@ -120,7 +176,7 @@ class Graaf {
 			width: div.clientWidth,
 			height: div.clientHeight,
 			gridSize: 10,
-			drawGrid: state.editmode? 'mesh' : false
+			drawGrid: state.editmode ? 'mesh' : false
 		});
 
 		div.hidden = true;
@@ -147,7 +203,7 @@ class Graaf {
 		});
 
 		this.lecture.makeCellsGlow();
-		this.lecture.makeLectureBoxes(this.paper, this.scale);
+		this.lecture.makeLectureBoxes(this.paper, this.scale["lecture"]);
 		this.lecture.orderForLayout();
 
 		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
@@ -161,8 +217,8 @@ class Graaf {
 			c.pos.y = c.element.attributes.position.y;
 		});
 
+		this.paper.scale(this.scale[this.currView].s, this.scale[this.currView].s);
 		this.showNone();
-		this.paper.scale(this.scale.sx, this.scale.sy);
 
 		div.hidden = false;
 		return graph;
@@ -181,13 +237,17 @@ class Graaf {
 			this.edges.forEach((e) => {
 				e.link.addTo(this.g);
 			});
-		} else if(lastView === "lecture") {
+		} else if (lastView === "lecture") {
 			this.cells.forEach((c) => {
 				c.moveTo(c.pos.x, c.pos.y, this.transitionTime);
-				setTimeout(() => {c.element.addTo(this.g)}, this.transitionTime);
+				setTimeout(() => {
+					c.element.addTo(this.g)
+				}, this.transitionTime);
 			});
 			this.edges.forEach(e => {
-				setTimeout(() => {e.link.addTo(this.g)}, this.transitionTime);
+				setTimeout(() => {
+					e.link.addTo(this.g)
+				}, this.transitionTime);
 			})
 		}
 

@@ -77,7 +77,11 @@ class Lecture {
 
 	positionCells(cells, x, y, transitionTime) {
 		for (let i = 0; i < cells.length; i++) {
-			cells[i].moveTo(x + this.padding.x, this.padding.y + y + (cells[i].height + this.padding.y) * i, transitionTime);
+			if(transitionTime > 0) {
+				cells[i].moveTo(x + this.padding.x, this.padding.y + y + (cells[i].height + this.padding.y) * i, transitionTime);
+			} else {
+				cells[i].element.position(x + this.padding.x, this.padding.y + y + (cells[i].height + this.padding.y) * i);
+			}
 		}
 	}
 
@@ -109,7 +113,7 @@ class Lecture {
 		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.padding.y) + this.padding.y;
 
         this.margin = {
-            x: (paper.options.width/scale.sx - 3 * this.width) / 2,
+            x: (paper.options.width/scale.s - 3 * this.width) / 2,
             y: 100
         };
 
@@ -138,6 +142,16 @@ class Lecture {
 				}
 			}
 		});
+	}
+
+	updatePosition() {
+		this.elPrev.position(this.margin.x, this.margin.y);
+		this.elNow.position(this.margin.x + this.width, this.margin.y);
+		this.elNext.position(this.margin.x + this.width*2, this.margin.y);
+		this.positionCells(this.prevCells, this.margin.x, this.margin.y, 0);
+		this.positionCells(this.cells, this.margin.x + this.width, this.margin.y, 0);
+		this.positionCells(this.nextCells, this.margin.x + this.width * 2, this.margin.y, 0);
+
 	}
 
 	addEdgeEndIfRelated(e) {
