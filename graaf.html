@@ -28,13 +28,13 @@
     <div class="d-flex flex-column w-100 h-100">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" onclick="switchView('lecture', this)">This lecture</a>
+                <a class="nav-link active" id="lecture" onclick="switchView('lecture', this)">This lecture</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" onclick="switchView('all', this)">Overview</a>
+                <a class="nav-link" id="all" onclick="switchView('all', this)">Overview</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" onclick="switchView('domains', this)">Domains</a>
+                <a class="nav-link" id="domains" onclick="switchView('domains', this)">Domains</a>
             </li>
             <li class="nav-item">
                 <button id="save-layout" class="btn btn-primary ml-3 mt-1 mb-1" onclick="state.graaf.saveGraph()" hidden>Save</button>

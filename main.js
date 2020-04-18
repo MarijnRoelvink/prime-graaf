@@ -9,11 +9,12 @@ let state = {
 function init() {
 	state.lecture = parseInt(getUrlQuery("lecture", 1));
 	state.editmode = !!parseInt(getUrlQuery("editmode", 0));
+	let view = getUrlQuery("view", "lecture");
 	document.getElementById("save-layout").hidden = !state.editmode;
 	new CSVImporter(state.dir).getGraph((graph) => {
 		state.graaf = new Graaf(graph, state.lecture);
 		state.graaf.getLayout(state.dir, () => {
-			state.graaf.showLecture("lecture");
+			switchView(view, document.getElementById(view));
 		});
 	});
 }
