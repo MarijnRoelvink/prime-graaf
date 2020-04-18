@@ -62,6 +62,13 @@ class Graaf {
 		}, oldS - newS > 0? totalT : 0);
 	}
 
+	zoom(ds) {
+		this.scale[this.currView] = {
+			s: this.scale[this.currView].s + ds,
+		};
+		this.paper.scale(this.scale[this.currView].s, this.scale[this.currView].s);
+	}
+
 	initControls() {
 		let self = this;
 
@@ -101,10 +108,7 @@ class Graaf {
 		};
 
 		let scale = function (evt, x, y, delta) {
-			self.scale[self.currView] = {
-				s: self.scale[self.currView].s + 0.025 * delta,
-			};
-			self.paper.scale(self.scale[self.currView].s, self.scale[self.currView].s);
+			self.zoom(0.025 * delta);
 		};
 		this.paper.on('blank:pointerdown', startMoving);
 		this.paper.on('blank:pointermove', move);

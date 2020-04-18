@@ -22,6 +22,17 @@
             width: 100%;
             flex-grow: 2;
         }
+        #zoom-in, #zoom-out {
+            position: absolute;
+            width: 20px;
+            right: 15px;
+            top: 50px;
+            z-index: 100;
+        }
+
+        #zoom-out {
+            top: 75px;
+        }
     </style>
 </head>
 <body>
@@ -40,6 +51,8 @@
                 <button id="save-layout" class="btn btn-primary ml-3 mt-1 mb-1" onclick="state.graaf.saveGraph()" hidden>Save</button>
             </li>
         </ul>
+        <img id="zoom-in" src="resources/zoom-in.png" onclick="state.graaf.zoom(0.1)">
+        <img id="zoom-out" src="resources/zoom-out.png" onclick="state.graaf.zoom(-0.1)">
         <div id="graaf"></div>
     </div>
 </body>
