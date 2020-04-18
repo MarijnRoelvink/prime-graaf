@@ -107,7 +107,7 @@ class Lecture {
 		this.elNext.remove();
 	}
 
-	makeLectureBoxes(paper, scale) {
+	makeLectureBoxes(graaf) {
 		this.width = 300;
 
         this.padding = {
@@ -116,9 +116,11 @@ class Lecture {
         };
 		this.height = Math.max(this.prevCells.length, Math.max(this.cells.length, this.nextCells.length)) * (this.cells[0].height + this.padding.y) + this.padding.y;
 
-        this.margin = {
-            x: (paper.options.width/scale.s - 3 * this.width) / 2,
-            y: 100
+		graaf.scale["lecture"].s = Math.min(graaf.paper.options.width / (this.width*3 + 50), graaf.paper.options.height / (this.height + 100));
+
+		this.margin = {
+            x: (graaf.paper.options.width/graaf.scale["lecture"].s - 3 * this.width) / 2,
+            y: (graaf.paper.options.height/graaf.scale["lecture"].s - this.height) / 2
         };
 
 		this.elPrev = this.makeBox(0, 'Previous topics');

@@ -73,12 +73,12 @@ class Graaf {
 		let self = this;
 
 		let startMoving = function (evt, x, y) {
-			self.lastPos = {x: x * self.scale[self.currView].s, y: y * self.scale[self.currView].s};
+			self.lastPos = {x: evt.clientX * self.scale[self.currView].s, y: evt.clientY * self.scale[self.currView].s};
 		};
 
 		let move = function (evt, x, y) {
-			let dx = evt.offsetX - self.lastPos.x;
-			let dy = evt.offsetY - self.lastPos.y;
+			let dx = evt.clientX * self.scale[self.currView].s - self.lastPos.x;
+			let dy = evt.clientY * self.scale[self.currView].s - self.lastPos.y;
 			switch (self.currView) {
 				case "lecture": {
 					self.lecture.margin.x += dx;
@@ -208,7 +208,7 @@ class Graaf {
 		});
 
 		this.lecture.makeCellsGlow();
-		this.lecture.makeLectureBoxes(this.paper, this.scale["lecture"]);
+		this.lecture.makeLectureBoxes(this);
 		this.lecture.orderForLayout();
 
 		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
@@ -229,27 +229,33 @@ class Graaf {
 		return graph;
 	}
 
-	centerDomains(){
+	centerDomains() {
 		let left = this.domains.reduce((m, el) => Math.min(m, el.cell.pos.x), this.domains[0].cell.pos.x);
 		let right = this.domains.reduce((m, el) => Math.max(m, el.cell.pos.x), this.domains[0].cell.pos.x) + this.domains[0].cell.width;
-		let margin = (this.paper.options.width/this.scale["domains"].s - (right - left))/2;
+		let top = this.domains.reduce((m, el) => Math.min(m, el.cell.pos.y), this.domains[0].cell.pos.y);
+		let bottom = this.domains.reduce((m, el) => Math.max(m, el.cell.pos.y), this.domains[0].cell.pos.y) + this.domains[0].cell.height;
+		this.scale["domains"].s = Math.min(this.paper.options.width / (right - left + 50), this.paper.options.height / (bottom - top + 50));
+		let marginX = (this.paper.options.width/this.scale["domains"].s - (right - left))/2;
+		let marginY = (this.paper.options.height/this.scale["domains"].s - (bottom - top))/2;
 		this.domains.forEach(d => {
 			let c = d.cell;
-			c.pos.x += margin - left;
+			c.pos.x += marginX - left;
+			c.pos.y += marginY - top;
 			c.element.position(c.pos.x, c.pos.y);
 		});
 	}
 
-	centerOverview(){
+	centerOverview() {
 		let left = this.cells.reduce((m, el) => Math.min(m, el.pos.x), this.cells[0].pos.x);
 		let right = this.cells.reduce((m, el) => Math.max(m, el.pos.x), this.cells[0].pos.x) + this.cells[0].width;
 		let top = this.cells.reduce((m, el) => Math.min(m, el.pos.y), this.cells[0].pos.y);
 		let bottom = this.cells.reduce((m, el) => Math.max(m, el.pos.y), this.cells[0].pos.y) + this.cells[0].height;
 		this.scale["all"].s = Math.min(this.paper.options.width / (right - left + 50), this.paper.options.height / (bottom - top + 50));
-		let margin = 25;
+		let marginX = (this.paper.options.width/this.scale["all"].s - (right - left))/2;
+		let marginY = (this.paper.options.height/this.scale["all"].s - (bottom - top))/2;
 		this.cells.forEach(c => {
-			c.pos.x += margin - left;
-			c.pos.y += margin - top;
+			c.pos.x += marginX - left;
+			c.pos.y += marginY - top;
 			c.element.position(c.pos.x, c.pos.y);
 		});
 	}
