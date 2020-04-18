@@ -73,12 +73,22 @@ class Graaf {
 		let self = this;
 
 		let startMoving = function (evt, x, y) {
-			self.lastPos = {x: evt.clientX * self.scale[self.currView].s, y: evt.clientY * self.scale[self.currView].s};
+			let ox = evt.offsetX, oy = evt.offsetY;
+			if(typeof(ox) === "undefined") {
+				ox = evt.touches[0].clientX;
+				oy = evt.touches[0].clientY;
+			}
+			self.lastPos = {x: ox / self.scale[self.currView].s, y: oy / self.scale[self.currView].s};
 		};
 
 		let move = function (evt, x, y) {
-			let dx = evt.clientX * self.scale[self.currView].s - self.lastPos.x;
-			let dy = evt.clientY * self.scale[self.currView].s - self.lastPos.y;
+			let dx = evt.offsetX, dy = evt.offsetY;
+			if(typeof(dx) === "undefined") {
+				dx = evt.touches[0].clientX;
+				dy = evt.touches[0].clientY;
+			}
+			dx = dx / self.scale[self.currView].s - self.lastPos.x;
+			dy = dy / self.scale[self.currView].s - self.lastPos.y;
 			switch (self.currView) {
 				case "lecture": {
 					self.lecture.margin.x += dx;
@@ -113,10 +123,10 @@ class Graaf {
 		this.paper.on('blank:pointerdown', startMoving);
 		this.paper.on('blank:pointermove', move);
 
-		this.paper.on('blank:mousewheel', scale);
-		this.paper.on('element:mousewheel', function (cv, evt, x, y, delta) {
-			scale(evt, x, y, delta);
-		});
+		// this.paper.on('blank:mousewheel', scale);
+		// this.paper.on('element:mousewheel', function (cv, evt, x, y, delta) {
+		// 	scale(evt, x, y, delta);
+		// });
 	}
 
 	getLayout(dir, callback) {
