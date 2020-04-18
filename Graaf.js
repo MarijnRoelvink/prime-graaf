@@ -30,7 +30,21 @@ class Graaf {
 	switchView(view) {
 		this.lecture.removeLectureBoxes();
 
-		this.timeScaling(view);
+		let oldS = this.scale[this.currView].s;
+		let newS = this.scale[view].s;
+		let totalT = this.transitionTime*Math.abs(oldS - newS)/0.4;
+		let currT = 0;
+		let interval = 10;
+
+		let fun = setInterval(() => {
+			if (currT < totalT) {
+				let progress = currT / totalT;
+				this.paper.scale(oldS + (newS - oldS) * progress, oldS + (newS - oldS) * progress);
+				currT += interval;
+			} else {
+				clearInterval(fun);
+			}
+		}, interval);
 
 		setTimeout(() => {
 			switch (view) {
@@ -45,26 +59,7 @@ class Graaf {
 					break;
 			}
 			this.currView = view;
-		}, this.transitionTime);
-	}
-
-	timeScaling(view) {
-		let oldS = this.scale[this.currView].s;
-		let newS = this.scale[view].s;
-		let totalT = this.transitionTime;
-		let currT = 0;
-		let interval = 10;
-
-		let fun = setInterval(() => {
-			if (currT < totalT) {
-				let progress = currT / totalT;
-				this.paper.scale(oldS + (newS - oldS) * progress, oldS + (newS - oldS) * progress);
-				currT += interval;
-			} else {
-				console.log("stop");
-				clearInterval(fun);
-			}
-		}, interval);
+		}, oldS - newS > 0? totalT : 0);
 	}
 
 	initControls() {
@@ -245,7 +240,8 @@ class Graaf {
 		let left = this.cells.reduce((m, el) => Math.min(m, el.pos.x), this.cells[0].pos.x);
 		let right = this.cells.reduce((m, el) => Math.max(m, el.pos.x), this.cells[0].pos.x) + this.cells[0].width;
 		let top = this.cells.reduce((m, el) => Math.min(m, el.pos.y), this.cells[0].pos.y);
-		this.scale["all"].s = this.paper.options.width / (right - left + 50);
+		let bottom = this.cells.reduce((m, el) => Math.max(m, el.pos.y), this.cells[0].pos.y) + this.cells[0].height;
+		this.scale["all"].s = Math.min(this.paper.options.width / (right - left + 50), this.paper.options.height / (bottom - top + 50));
 		let margin = 25;
 		this.cells.forEach(c => {
 			c.pos.x += margin - left;
@@ -317,6 +313,21 @@ class Graaf {
 				if (!this.lecture.cellIsRelated(c)) {
 					setTimeout(() => c.element.remove(), 300);
 				}
+			});
+			this.lecture.prevCells.forEach(c => {
+				c.inComingEdges.forEach(e => {
+					setTimeout(() => e.link.remove(), 300);
+				});
+				c.outGoingEdges.forEach(e => {
+					if(!this.lecture.edgeIsRelated(e)){
+						setTimeout(() => e.link.remove(), 300);
+					}
+				});
+			});
+			this.lecture.nextCells.forEach(c => {
+				c.outGoingEdges.forEach(e => {
+					setTimeout(() => e.link.remove(), 300);
+				});
 			});
 		} else if (lastView === "domains") {
 			this.domains.forEach(d => {

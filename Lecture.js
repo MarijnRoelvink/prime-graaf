@@ -50,6 +50,10 @@ class Lecture {
 		this.prevCells = orderFittingly(this.prevCells, "outGoingEdges", "to");
 
 		this.nextCells = orderFittingly(this.nextCells, "inComingEdges", "from");
+
+		this.cells.forEach(c => {
+			c.element.toFront();
+		})
 	}
 
 	cellIsRelated(c) {
