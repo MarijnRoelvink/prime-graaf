@@ -2,7 +2,7 @@ name;domain;
 Basis;Subspaces;
 Characteristic equation;Eigenvalues;
 Complex eigenvalues;Eigenvalues;
-Constraint optimization;Symmetry;
+Constrained optimization;Symmetry;
 Coordinate vectors;Subspaces;
 Determinants;Transformations;
 Diagonalization;Eigenvalues;

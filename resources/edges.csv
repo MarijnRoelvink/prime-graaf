@@ -57,7 +57,7 @@ Matrix-vector product;Eigenvalues and eigenvectors
 Determinants;Characteristic equation
 Determinants;Inverse matrices
 Symmetric matrices;Quadratic forms
-Constraint optimization;Singular value decomposition
-Quadratic forms;Constraint optimization
+Constrained optimization;Singular value decomposition
+Quadratic forms;Constrained optimization
 Linear transformations;Area & Volume
 Determinants;Area & Volume

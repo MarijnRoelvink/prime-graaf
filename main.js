@@ -2,7 +2,7 @@ let state = {
 	lecture: 1,
 	graaf: null,
 	editmode: false,
-	dir: "resources/WBMT1051/"
+	dir: "resources/"
 };
 
 
