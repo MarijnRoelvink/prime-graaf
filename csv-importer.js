@@ -67,6 +67,7 @@ class CSVImporter {
 		$.get(url, function (data) {
 			$.csv.toObjects(data, {separator: ";"},
 				(err, csvData) => {
+					csvData = csvData.filter(d => Object.values(d)[0] !== "");
 					csvData = csvData.map((row) => {
 						return new datatype(row);
 					});
