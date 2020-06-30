@@ -25,6 +25,19 @@ class Graaf {
 				s: 1.0
 			}
 		};
+		this.origin = {
+			lecture: {
+				x: 0.0,
+				y: 0.0
+			},
+			all: {
+				x: 0.0,
+				y: 0.0
+			},
+			domains: {
+				x: 0.0,
+				y: 0.0			}
+		};
 		this.transitionTime = 1000;
 		this.buildGraph();
 		this.initControls();
@@ -35,6 +48,8 @@ class Graaf {
 
 		let oldS = this.scale[this.currView].s;
 		let newS = this.scale[view].s;
+		let oldO = this.origin[this.currView];
+		let newO = this.origin[view];
 		let totalT = this.transitionTime*Math.abs(oldS - newS);
 		let currT = 0;
 		let interval = 10;
@@ -43,6 +58,7 @@ class Graaf {
 			if (currT < totalT) {
 				let progress = currT / totalT;
 				this.paper.scale(oldS + (newS - oldS) * progress, oldS + (newS - oldS) * progress);
+				this.paper.setOrigin(oldO.x + (newO.x - oldO.x)*progress, oldO.y + (newO.y - oldO.y)*progress);
 				currT += interval;
 			} else {
 				clearInterval(fun);
@@ -74,7 +90,7 @@ class Graaf {
 				ox = evt.touches[0].clientX;
 				oy = evt.touches[0].clientY;
 			}
-			self.lastPos = {x: ox / self.scale[self.currView].s, y: oy / self.scale[self.currView].s};
+			self.lastPos = {x: ox, y: oy};
 		};
 
 		let move = function (evt, x, y) {
@@ -83,32 +99,13 @@ class Graaf {
 				dx = evt.touches[0].clientX;
 				dy = evt.touches[0].clientY;
 			}
-			dx = dx / self.scale[self.currView].s - self.lastPos.x;
-			dy = dy / self.scale[self.currView].s - self.lastPos.y;
-			switch (self.currView) {
-				case "lecture": {
-					self.lecture.margin.x += dx;
-					self.lecture.margin.y += dy;
-					self.lecture.updatePosition();
-				}
-					break;
-				case "all": {
-					self.cells.forEach(c => {
-						c.pos.x += dx;
-						c.pos.y += dy;
-						c.element.position(c.pos.x, c.pos.y);
-					});
-				}
-					break;
-				case "domains": {
-					self.domains.forEach(d => {
-						let c = d.cell;
-						c.pos.x += dx;
-						c.pos.y += dy;
-						c.element.position(c.pos.x, c.pos.y);
-					});
-				}
-			}
+			dx = dx - self.lastPos.x;
+			dy = dy - self.lastPos.y;
+
+			self.paper.setOrigin(self.paper.options.origin.x + dx, self.paper.options.origin.y + dy);
+			self.origin[self.currView] = {
+				x: self.paper.options.origin.x + dx,
+				y: self.paper.options.origin.y + dy};
 			self.lastPos.x += dx;
 			self.lastPos.y += dy;
 		};
@@ -122,12 +119,7 @@ class Graaf {
 			let cell = self.cells.find((c) => c.matchesElement(cellView.model.attributes));
 			cell.pos.x = cellView.model.attributes.position.x;
 			cell.pos.y = cellView.model.attributes.position.y;
-		})
-
-		// this.paper.on('blank:mousewheel', scale);
-		// this.paper.on('element:mousewheel', function (cv, evt, x, y, delta) {
-		// 	scale(evt, x, y, delta);
-		// });
+		});
 	}
 
 	getLayout(dir, callback) {
@@ -286,7 +278,7 @@ class Graaf {
 				c.moveTo(c.pos.x, c.pos.y, this.transitionTime);
 				setTimeout(() => {
 					c.element.addTo(this.g)
-				}, this.transitionTime);
+				}, this.transitionTime*0.5);
 			});
 			this.edges.forEach(e => {
 				setTimeout(() => {
