@@ -4,6 +4,9 @@ class Graaf {
 		this.edges = edges;
 		this.domains = domains;
 		this.lecture = lectures.find((m) => m.number === lecture);
+		if(!this.lecture) {
+			this.lecture = lectures[0];
+		}
 		this.currView = "lecture";
 		this.g = {};
 		this.paper = {};
@@ -122,6 +125,12 @@ class Graaf {
 		};
 		this.paper.on('blank:pointerdown', startMoving);
 		this.paper.on('blank:pointermove', move);
+		this.paper.on('cell:pointermove', function (cellView, evt, x, y ) {
+			let name = cellView.model.attributes.attrs.label.text.replace('\n', ' ');
+			let cell = self.cells.find((c) => c.name === name);
+			cell.pos.x = cellView.model.attributes.position.x;
+			cell.pos.y = cellView.model.attributes.position.y;
+		})
 
 		// this.paper.on('blank:mousewheel', scale);
 		// this.paper.on('element:mousewheel', function (cv, evt, x, y, delta) {
@@ -139,6 +148,7 @@ class Graaf {
 				error: function (status) {
 					console.log("no layout has been defined yet");
 					cb();
+					self.centerOverview();
 				},
 				success: function (data) {
 					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
