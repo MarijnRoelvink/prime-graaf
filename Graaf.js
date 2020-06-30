@@ -1,5 +1,5 @@
 class Graaf {
-	constructor({cells, edges, domains, lectures}, lecture, callback) {
+	constructor({cells, edges, domains, lectures}, lecture) {
 		this.cells = cells;
 		this.edges = edges;
 		this.domains = domains;
@@ -146,8 +146,17 @@ class Graaf {
 				dataType: 'json',
 				error: function (status) {
 					console.log("no layout has been defined yet");
-					cb();
+					let graphBBox = joint.layout.DirectedGraph.layout(self.g, {
+						nodeSep: 10,
+						edgeSep: 10,
+						rankDir: "LR"
+					});
+					self.cells.forEach((c) => {
+						c.pos = c.element.attributes.position;
+					});
 					self.centerOverview();
+					self.showNone();
+					cb();
 				},
 				success: function (data) {
 					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
@@ -157,8 +166,9 @@ class Graaf {
 							cell.pos = d.position;
 						}
 					});
-					cb();
 					self.centerOverview();
+					self.showNone();
+					cb();
 				}
 			});
 		};
@@ -204,8 +214,6 @@ class Graaf {
 			drawGrid: state.editmode ? 'mesh' : false
 		});
 
-		div.hidden = true;
-
 		let height = 70;
 		this.domains.forEach((d) => {
 			this.makeSVGElement(d.domain, d.svg);
@@ -231,21 +239,8 @@ class Graaf {
 		this.lecture.makeLectureBoxes(this);
 		this.lecture.orderForLayout();
 
-		let graphBBox = joint.layout.DirectedGraph.layout(graph, {
-			nodeSep: 10,
-			edgeSep: 10,
-			rankDir: "LR"
-		});
-
-		this.cells.forEach((c) => {
-			c.pos.x = c.element.attributes.position.x;
-			c.pos.y = c.element.attributes.position.y;
-		});
-
 		this.paper.scale(this.scale[this.currView].s, this.scale[this.currView].s);
-		this.showNone();
 
-		div.hidden = false;
 		return graph;
 	}
 

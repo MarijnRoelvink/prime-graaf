@@ -12,9 +12,13 @@ function init() {
 	let view = getUrlQuery("view", "lecture");
 	document.getElementById("save-layout").hidden = !state.editmode;
 	new CSVImporter(state.dir).getGraph((graph) => {
+		let div = document.getElementById('graaf');
+		div.style.setProperty("filter", "opacity(0)");
 		state.graaf = new Graaf(graph, state.lecture);
 		state.graaf.getLayout(state.dir, () => {
 			switchView(view, document.getElementById(view));
+			div.style.setProperty("filter", "none");
+			document.getElementById("loading").hidden = true;
 		});
 	});
 }

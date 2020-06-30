@@ -40,6 +40,13 @@
             top: 75px;
         }
 
+        #loading {
+            position: absolute;
+            width: 70px;
+            left: 50%;
+            top: 50%;
+        }
+
         .nav-item {
             cursor: pointer;
         }
@@ -63,6 +70,7 @@
         </ul>
         <img id="zoom-in" src="resources/icons/zoom-in.png" onclick="state.graaf.zoom(0.1)">
         <img id="zoom-out" src="resources/icons/zoom-out.png" onclick="state.graaf.zoom(-0.1)">
+        <img id="loading" src="resources/icons/loading_icon.gif">
         <div id="graaf"></div>
     </div>
 </body>
