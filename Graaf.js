@@ -126,8 +126,7 @@ class Graaf {
 		this.paper.on('blank:pointerdown', startMoving);
 		this.paper.on('blank:pointermove', move);
 		this.paper.on('cell:pointermove', function (cellView, evt, x, y ) {
-			let name = cellView.model.attributes.attrs.label.text.replace('\n', ' ');
-			let cell = self.cells.find((c) => c.name === name);
+			let cell = self.cells.find((c) => c.matchesElement(cellView.model.attributes));
 			cell.pos.x = cellView.model.attributes.position.x;
 			cell.pos.y = cellView.model.attributes.position.y;
 		})
@@ -152,10 +151,11 @@ class Graaf {
 				},
 				success: function (data) {
 					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
-						let name = d.attrs.label.text.replace('\n', ' ');
-						let cell = self.cells.find((c) => c.name === name);
-						cell.element.position(d.position.x, d.position.y);
-						cell.pos = d.position;
+						let cell = self.cells.find((c) => c.matchesElement(d));
+						if(cell) {
+							cell.element.position(d.position.x, d.position.y);
+							cell.pos = d.position;
+						}
 					});
 					cb();
 					self.centerOverview();

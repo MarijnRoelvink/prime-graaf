@@ -10,6 +10,11 @@ class Cell {
         this.pos = {x: 0, y: 0};
     }
 
+    matchesElement(el) {
+        let name = el.attrs.label.text.replace(/[\n ]/g, '');
+        return this.name.replace(/ /g, '') === name;
+    }
+
     makeElement(graph, width, height) {
         this.height = height;
         this.width = width;
