@@ -35,7 +35,7 @@ class Graaf {
 
 		let oldS = this.scale[this.currView].s;
 		let newS = this.scale[view].s;
-		let totalT = this.transitionTime*Math.abs(oldS - newS)/0.4;
+		let totalT = this.transitionTime*Math.abs(oldS - newS);
 		let currT = 0;
 		let interval = 10;
 
@@ -63,13 +63,6 @@ class Graaf {
 			}
 			this.currView = view;
 		}, oldS - newS > 0? totalT : 0);
-	}
-
-	zoom(ds) {
-		this.scale[this.currView] = {
-			s: this.scale[this.currView].s + ds,
-		};
-		this.paper.scale(this.scale[this.currView].s, this.scale[this.currView].s);
 	}
 
 	initControls() {
@@ -410,6 +403,13 @@ class Graaf {
 			this.lecture.elPrev.addTo(this.g);
 			this.lecture.elNext.addTo(this.g);
 		}, t);
+	}
+
+	zoom(ds) {
+		this.scale[this.currView] = {
+			s: this.scale[this.currView].s + ds,
+		};
+		this.paper.scale(this.scale[this.currView].s, this.scale[this.currView].s);
 	}
 
 	saveGraph() {
