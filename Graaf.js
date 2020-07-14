@@ -117,6 +117,9 @@ class Graaf {
 		this.paper.on('blank:pointermove', move);
 		this.paper.on('cell:pointermove', function (cellView, evt, x, y ) {
 			let cell = self.cells.find((c) => c.matchesElement(cellView.model.attributes));
+			if(!cell) {
+				cell = self.domains.find((d) => d.cell.matchesElement(cellView.model.attributes)).cell;
+			}
 			cell.pos.x = cellView.model.attributes.position.x;
 			cell.pos.y = cellView.model.attributes.position.y;
 		});

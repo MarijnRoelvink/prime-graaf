@@ -12,7 +12,7 @@ class Cell {
 
     matchesElement(el) {
         let name = el.attrs.label.text.replace(/[\n ]/g, '');
-        return this.name.replace(/ /g, '') === name;
+        return state.compareStr(this.name.replace(/ /g, ''), name);
     }
 
     makeElement(graph, width, height) {
