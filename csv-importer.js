@@ -9,20 +9,20 @@ class CSVImporter {
 				dedges.forEach((de) => {
 					let from = de.from;
 					let to = de.to;
-					de.from = domains.find((d) => from === d.domain).cell;
-					de.to = domains.find((d) => to === d.domain).cell;
+					de.from = domains.find((d) => state.compareStr(from, d.domain)).cell;
+					de.to = domains.find((d) => state.compareStr(to, d.domain)).cell;
 					de.from.outGoingEdges.push(de);
 					de.to.inComingEdges.push(de);
 				});
 				this.getCells((cells) => {
 					cells.forEach((c) => {
 						let domain = c.domain;
-						c.domain = domains.find((d) => d.domain === domain);
+						c.domain = domains.find((d) => state.compareStr(d.domain, domain));
 					});
 					this.getLectures((lectures) => {
 						lectures.forEach((m) => {
 							m.cells = m.cells.map((mc) => {
-								return cells.find((c) => c.name === mc);
+								return cells.find((c) => state.compareStr(c.name, mc));
 							});
 						});
 
@@ -30,8 +30,8 @@ class CSVImporter {
 							edges.forEach((e) => {
 								let from = e.from;
 								let to = e.to;
-								e.from = cells.find((c) => c.name === from);
-								e.to = cells.find((c) => c.name === to);
+								e.from = cells.find((c) => state.compareStr(c.name, from));
+								e.to = cells.find((c) => state.compareStr(c.name, to));
 								e.from.outGoingEdges.push(e);
 								e.to.inComingEdges.push(e);
 							});

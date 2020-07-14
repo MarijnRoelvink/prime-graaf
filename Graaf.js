@@ -169,7 +169,7 @@ class Graaf {
 				success: function (data) {
 					data.cells.filter((d) => d.type !== "standard.Link").forEach((d) => {
 						let name = d.attrs.label.text.replace('\n', ' ');
-						let domain = self.domains.find((c) => c.domain === name);
+						let domain = self.domains.find((c) => state.compareStr(c.domain, name));
 						domain.cell.element.position(d.position.x, d.position.y);
 						domain.cell.pos = d.position;
 					});

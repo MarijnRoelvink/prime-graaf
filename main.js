@@ -2,7 +2,12 @@ let state = {
 	lecture: 1,
 	graaf: null,
 	editmode: false,
-	dir: "resources/"
+	dir: "resources/",
+	compareStr: function (str1, str2) {
+		str1 = str1.toLowerCase();
+		str2 = str2.toLowerCase();
+		return str1 === str2;
+	}
 };
 
 
@@ -22,23 +27,24 @@ function init() {
 		});
 	});
 }
+
 function switchView(view, el) {
-	$(".nav-link").each(function() {
+	$(".nav-link").each(function () {
 		$(this).removeClass("active");
 	});
 	$(el).addClass("active");
 	state.graaf.switchView(view);
 }
+
 function getUrlQuery(q, defaultV = "") {
 	let query = {};
 	let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
 		query[key] = value;
 	});
-	if(typeof(query[q]) === "undefined") {
+	if (typeof (query[q]) === "undefined") {
 		query[q] = defaultV;
 	}
 	return query[q];
 }
-
 
 init();
